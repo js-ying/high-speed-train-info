@@ -1,0 +1,29 @@
+$dark: #212121;
+$blue: #5899E2;
+$light-dark: #313030;
+
+body {
+  background-color: $dark;
+  color: white;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;
+  margin-top: 30px;
+}
+
+select {
+  appearance: none;
+  border: 0px;
+  background-color: transparent;
+  color: white;
+}
+
+.btn-outline-light {
+  background-color: transparent;
+  border-color: white;
+  color: white;
+
+  &:hover {
+    background-color: $blue;
+    border-color: $blue;
+    color: white;
+  }
+}
