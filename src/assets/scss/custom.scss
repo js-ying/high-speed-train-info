@@ -21,7 +21,15 @@ select {
 
   &:hover {
     background-color: $light-blue;
-    border-color: $light-blue;
     color: white;
   }
+
+  &.active {
+    background-color: $light-blue;
+  }
+}
+
+#web-title {
+  font-size: 1.25rem;
+  cursor: pointer;
 }
