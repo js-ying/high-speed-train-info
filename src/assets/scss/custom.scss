@@ -1,6 +1,4 @@
-$dark: #212121;
-$blue: #5899E2;
-$light-dark: #313030;
+@import 'color-variables.scss';
 
 body {
   background-color: $dark;
@@ -22,8 +20,8 @@ select {
   color: white;
 
   &:hover {
-    background-color: $blue;
-    border-color: $blue;
+    background-color: $light-blue;
+    border-color: $light-blue;
     color: white;
   }
 }
