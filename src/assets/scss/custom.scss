@@ -16,20 +16,28 @@ select {
 
 .btn-outline-light {
   background-color: transparent;
-  border-color: white;
+  border-color: rgb(146, 140, 140);
   color: white;
 
   &:hover {
-    background-color: $light-blue;
+    background-color: $ice-berg;
     color: white;
   }
 
   &.active {
-    background-color: $light-blue;
+    background-color: $ice-berg;
   }
 }
 
 #web-title {
   font-size: 1.25rem;
   cursor: pointer;
+}
+
+.btn-light-blue {
+  color: white;
+
+  &:hover {
+    color: white;
+  }
 }

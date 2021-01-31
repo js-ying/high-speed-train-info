@@ -6,7 +6,7 @@
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'start' }"
-          @click="formAction.clickStationCondition('start')"
+          @click="formAction.setNowSelected('start')"
         >
           <div>出發車站</div>
           <div>{{ formData.start.selectedStation }}</div>
@@ -16,23 +16,34 @@
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'end' }"
-          @click="formAction.clickStationCondition('end')"
+          @click="formAction.setNowSelected('end')"
         >
           <div>抵達車站</div>
           <div>{{ formData.end.selectedStation }}</div>
         </button>
       </div>
       <div class="col text-center">
-        <button class="btn btn-outline-light">
+        <button
+          class="btn btn-outline-light"
+          :class="{ active: nowSelected === 'datetime' }"
+          @click="formAction.setNowSelected('datetime')"
+        >
           <div>出發日期</div>
           <div>2021-01-09 22:03</div>
         </button>
       </div>
     </div>
-    <!-- 查詢條件列相關顯示 -->
-    <div class="row mt-4" v-if="stationList.length > 0 && nowSelected">
+    <!-- 查詢車站相關顯示 -->
+    <div
+      class="row mt-4"
+      id="query-station-ui"
+      v-if="
+        stationList.length > 0 &&
+          (nowSelected === 'start' || nowSelected === 'end')
+      "
+    >
       <!-- 車站搜尋框 -->
-      <div class="col-12 mb-3">
+      <div class="col-12">
         <input
           class="input form-control"
           v-model="formData[nowSelected].inputText"
@@ -41,14 +52,14 @@
           ref="inputText"
         />
       </div>
-      <!-- 車站清單 -->
+      <!-- 車站清單按鈕 -->
       <div
         class="col-3"
         v-for="(station, $index) in formData[nowSelected].filterStationList"
         :key="$index"
       >
         <button
-          class="btn btn-blue mb-3"
+          class="btn btn-gray mt-3"
           @click="formAction.setStation(nowSelected, station)"
         >
           {{ station }}
@@ -56,20 +67,49 @@
       </div>
       <!-- 無符合車站 -->
       <div
-        class="col-3"
+        class="col-3 mt-3"
         v-if="formData[nowSelected].filterStationList.length <= 0"
       >
         無符合車站。
       </div>
+    </div>
+    <!-- 出發日期相關顯示 -->
+    <div
+      class="row mt-4"
+      id="datetime-picker-ui"
+      v-if="nowSelected === 'datetime'"
+    >
+      <div class="col-3">
+        <input
+          type="date"
+          class="form-control"
+          v-model="formData.date.inputText"
+        />
+      </div>
+      <div class="col-3">
+        <input
+          type="time"
+          class="form-control"
+          v-model="formData.time.inputText"
+        />
+      </div>
+    </div>
+    <!-- 搜尋按鈕 -->
+    <div class="text-center mt-4">
+      <button type="button" class="btn btn-light-blue">
+        搜尋
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, ref } from "vue";
+import getNowDate from "@/services/get-now-date";
+import getNowTime from "@/services/get-now-time";
 import { Station } from "@/types/station";
-import { fakeStation } from "@/assets/fake-data/station";
 import QueryAreaForm from "@/types/query-area-form";
+import { fakeStation } from "@/assets/fake-data/station";
 
 export default defineComponent({
   name: "QueryArea",
@@ -110,21 +150,23 @@ export default defineComponent({
             return stationList;
           }
         })
+      },
+      date: {
+        inputText: getNowDate()
+      },
+      time: {
+        inputText: getNowTime()
       }
     });
     const formAction = reactive({
-      clickStationCondition: (direction: string) => {
-        if (direction === "start") {
-          nowSelected.value = direction;
-        }
+      setNowSelected: (selected: string) => {
+        nowSelected.value = selected;
 
-        if (direction === "end") {
-          nowSelected.value = direction;
+        if (selected === "start" || selected === "end") {
+          setTimeout(() => {
+            inputText.value.focus();
+          }, 10);
         }
-
-        setTimeout(() => {
-          inputText.value.focus();
-        }, 10);
       },
       setStation: (direction: string, station?: string) => {
         // 如果有帶參數進來代表 user 點擊按鈕
@@ -204,7 +246,10 @@ export default defineComponent({
   }
 }
 
-.btn {
-  width: 100%;
+#query-condition-row,
+#query-station-ui {
+  .btn {
+    width: 100%;
+  }
 }
 </style>
