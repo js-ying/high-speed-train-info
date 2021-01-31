@@ -1,5 +1,6 @@
 <template>
   <div id="query-area">
+    <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
     <div class="row" id="query-condition-row">
       <div class="col text-center">
         <button
@@ -28,7 +29,9 @@
         </button>
       </div>
     </div>
+    <!-- 查詢條件列相關顯示 -->
     <div class="row mt-4" v-if="stationList.length > 0 && nowSelected">
+      <!-- 車站搜尋框 -->
       <div class="col-12 mb-3">
         <input
           class="input form-control"
@@ -38,6 +41,7 @@
           ref="inputText"
         />
       </div>
+      <!-- 車站清單 -->
       <div
         class="col-3"
         v-for="(station, $index) in formData[nowSelected].filterStationList"
@@ -49,6 +53,13 @@
         >
           {{ station }}
         </button>
+      </div>
+      <!-- 無符合車站 -->
+      <div
+        class="col-3"
+        v-if="formData[nowSelected].filterStationList.length <= 0"
+      >
+        無符合車站。
       </div>
     </div>
   </div>
@@ -126,12 +137,14 @@ export default defineComponent({
             formData[direction].filterStationList[0];
         }
 
-        nowSelected.value = "";
-        formData.start.inputText = "";
-        formData.end.inputText = "";
+        if (station || formData[direction].filterStationList.length === 1) {
+          nowSelected.value = "";
+          formData.start.inputText = "";
+          formData.end.inputText = "";
 
-        if (direction === "start") {
-          nowSelected.value = "end";
+          if (direction === "start") {
+            nowSelected.value = "end";
+          }
         }
       },
       resetQueryCondition: () => {
