@@ -12,7 +12,7 @@
           @click="formAction.setNowSelected('start')"
         >
           <div>出發車站</div>
-          <div>{{ inputStationData.start.selectedStation }}</div>
+          <div>{{ inputStationData.start.selectedStation.name }}</div>
         </button>
       </div>
       <div class="col col-md-4 text-center">
@@ -25,7 +25,7 @@
           @click="formAction.setNowSelected('end')"
         >
           <div>抵達車站</div>
-          <div>{{ inputStationData.end.selectedStation }}</div>
+          <div>{{ inputStationData.end.selectedStation.name }}</div>
         </button>
       </div>
       <div class="col-12 col-md-4 text-center mt-4 mt-md-0">
@@ -74,7 +74,7 @@
           class="btn btn-gray mt-3"
           @click="formAction.setStation(nowSelected, station)"
         >
-          {{ station }}
+          {{ station.name }}
         </button>
       </div>
       <!-- 無符合車站 -->
@@ -111,26 +111,30 @@
         搜尋
       </button>
     </div>
+    <time-table :dataList="timeTableDataList" class="mt-3" />
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref } from "vue";
+import { computed, defineComponent, onMounted, reactive, Ref, ref } from "vue";
 import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
+import TimeTable from "@/components/TimeTable.vue";
 import getNowDate from "@/services/get-now-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
-import { Station } from "@/types/station";
+import getOdTimeTable from "@/services/get-od-time-table";
+import { SelectedStation, Station } from "@/types/station";
 import InputStationData from "@/types/input-station-data";
+import { OdTimeTable } from "@/types/od-time-table";
 
 export default defineComponent({
   name: "QueryArea",
-  components: { DatePicker },
+  components: { DatePicker, TimeTable },
   setup() {
     const axios = require("axios").default;
 
-    const stationList: string[] = reactive([]);
+    const stationList: SelectedStation[] = reactive([]);
 
     const nowSelected = ref("");
 
@@ -146,12 +150,12 @@ export default defineComponent({
       start: {
         inputText: "",
         placeholder: "出發車站（e.g. 新竹）",
-        selectedStation: "",
+        selectedStation: new SelectedStation(),
         valid: true,
         filterStationList: computed(() => {
           if (inputStationData.start.inputText) {
             return stationList.filter(station =>
-              station.includes(inputStationData.start.inputText)
+              station.name.includes(inputStationData.start.inputText)
             );
           } else {
             return stationList;
@@ -161,12 +165,12 @@ export default defineComponent({
       end: {
         inputText: "",
         placeholder: "抵達車站（e.g. 台北）",
-        selectedStation: "",
+        selectedStation: new SelectedStation(),
         valid: true,
         filterStationList: computed(() => {
           if (inputStationData.end.inputText) {
             return stationList.filter(station =>
-              station.includes(inputStationData.end.inputText)
+              station.name.includes(inputStationData.end.inputText)
             );
           } else {
             return stationList;
@@ -179,6 +183,9 @@ export default defineComponent({
         selectedDatetime: new Date()
       }
     });
+
+    const timeTableDataList: Ref<OdTimeTable[]> = ref([]);
+
     const formAction = reactive({
       setNowSelected: (selected: string) => {
         if (nowSelected.value === selected) {
@@ -194,7 +201,7 @@ export default defineComponent({
           }, 10);
         }
       },
-      setStation: (direction: string, station?: string) => {
+      setStation: (direction: string, station?: SelectedStation) => {
         // 如果有帶參數進來代表 user 點擊按鈕
         if (station) {
           inputStationData[direction].selectedStation = station;
@@ -221,31 +228,43 @@ export default defineComponent({
       },
       resetQueryCondition: () => {
         inputStationData.start.inputText = "";
-        inputStationData.start.selectedStation = "";
+        inputStationData.start.selectedStation = new SelectedStation();
         inputStationData.start.valid = true;
         inputStationData.end.inputText = "";
-        inputStationData.end.selectedStation = "";
+        inputStationData.end.selectedStation = new SelectedStation();
         inputStationData.end.valid = true;
         inputDatetimeData.datetime.selectedDatetime = new Date();
         nowSelected.value = "";
       },
-      query: () => {
+      checkEmpty: () => {
         inputStationData.start.valid = inputStationData.start.selectedStation
+          .name
           ? true
           : false;
-        inputStationData.end.valid = inputStationData.end.selectedStation
+        inputStationData.end.valid = inputStationData.end.selectedStation.name
           ? true
           : false;
         if (!inputStationData.start.valid || !inputStationData.end.valid)
-          return;
+          return false;
+
+        return true;
+      },
+      query: async () => {
+        const checkSucess = await formAction.checkEmpty();
+        if (checkSucess) {
+          timeTableDataList.value = await getOdTimeTable(
+            inputStationData.start.selectedStation.id,
+            inputStationData.end.selectedStation.id,
+            processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime)
+          );
+        }
       }
     });
 
     const processStation = (data: Station[]) => {
       data.forEach(item => {
-        stationList.push(item.StationName.Zh_tw);
+        stationList.push({ name: item.StationName.Zh_tw, id: item.StationID });
       });
-      console.log(stationList);
     };
 
     async function getStationList() {
@@ -280,6 +299,7 @@ export default defineComponent({
       stationInputDom,
       inputStationData,
       inputDatetimeData,
+      timeTableDataList,
       formAction
     };
   }

@@ -20,3 +20,8 @@ export interface Station {
   UpdateTime: string;
   VersionID: number;
 }
+
+export class SelectedStation {
+  name = "";
+  id = "";
+}
