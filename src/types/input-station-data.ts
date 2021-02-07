@@ -1,6 +1,7 @@
-export default interface QueryAreaForm {
+export default interface InputStationData {
   [key: string]: QueryParams;
 }
+
 interface QueryParams {
   inputText: string;
   placeholder: string;

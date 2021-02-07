@@ -2,34 +2,37 @@
   <div id="query-area">
     <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
     <div class="row" id="query-condition-row">
-      <div class="col text-center">
+      <div class="col col-md-4 text-center">
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'start' }"
           @click="formAction.setNowSelected('start')"
         >
           <div>出發車站</div>
-          <div>{{ formData.start.selectedStation }}</div>
+          <div>{{ inputStationData.start.selectedStation }}</div>
         </button>
       </div>
-      <div class="col text-center">
+      <div class="col col-md-4 text-center">
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'end' }"
           @click="formAction.setNowSelected('end')"
         >
           <div>抵達車站</div>
-          <div>{{ formData.end.selectedStation }}</div>
+          <div>{{ inputStationData.end.selectedStation }}</div>
         </button>
       </div>
-      <div class="col text-center">
+      <div class="col-12 col-md-4 text-center mt-4 mt-md-0">
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'datetime' }"
           @click="formAction.setNowSelected('datetime')"
         >
           <div>出發日期</div>
-          <div>2021-01-09 22:03</div>
+          <div>
+            {{ processDateToYyyyMmDd(inputDatetimeData.datetime.inputText) }}
+            {{ porcessTimeToHhMm(inputDatetimeData.datetime.inputText) }}
+          </div>
         </button>
       </div>
     </div>
@@ -46,16 +49,17 @@
       <div class="col-12">
         <input
           class="input form-control"
-          v-model="formData[nowSelected].inputText"
-          :placeholder="formData[nowSelected].placeholder"
+          v-model="inputStationData[nowSelected].inputText"
+          :placeholder="inputStationData[nowSelected].placeholder"
           v-on:keyup.enter="formAction.setStation(nowSelected)"
-          ref="inputText"
+          ref="stationInputDom"
         />
       </div>
       <!-- 車站清單按鈕 -->
       <div
         class="col-3"
-        v-for="(station, $index) in formData[nowSelected].filterStationList"
+        v-for="(station, $index) in inputStationData[nowSelected]
+          .filterStationList"
         :key="$index"
       >
         <button
@@ -68,7 +72,7 @@
       <!-- 無符合車站 -->
       <div
         class="col-3 mt-3"
-        v-if="formData[nowSelected].filterStationList.length <= 0"
+        v-if="inputStationData[nowSelected].filterStationList.length <= 0"
       >
         無符合車站。
       </div>
@@ -79,19 +83,14 @@
       id="datetime-picker-ui"
       v-if="nowSelected === 'datetime'"
     >
-      <div class="col-3">
-        <input
-          type="date"
-          class="form-control"
-          v-model="formData.date.inputText"
-        />
-      </div>
-      <div class="col-3">
-        <input
-          type="time"
-          class="form-control"
-          v-model="formData.time.inputText"
-        />
+      <div class="col text-center">
+        <date-picker
+          mode="dateTime"
+          color="blue"
+          is-dark
+          :min-date="nowDate"
+          v-model="inputDatetimeData.datetime.inputText"
+        ></date-picker>
       </div>
     </div>
     <!-- 搜尋按鈕 -->
@@ -105,32 +104,41 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, ref } from "vue";
-import getNowDate from "@/services/get-now-date";
-import getNowTime from "@/services/get-now-time";
-import { Station } from "@/types/station";
-import QueryAreaForm from "@/types/query-area-form";
+import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
+import getNowDate from "@/services/get-now-date";
+import processDate from "@/services/process-date";
+import processTime from "@/services/process-time";
+import { Station } from "@/types/station";
+import InputStationData from "@/types/input-station-data";
 
 export default defineComponent({
   name: "QueryArea",
-  props: {
-    msg: String
-  },
+  components: { DatePicker },
   setup() {
     const axios = require("axios").default;
 
     const stationList: string[] = reactive([]);
+
     const nowSelected = ref("");
-    const inputText: any = ref(null);
-    const formData: QueryAreaForm = reactive({
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stationInputDom: any = ref(null);
+
+    const nowDate = ref(getNowDate());
+
+    const processDateToYyyyMmDd = processDate;
+    const porcessTimeToHhMm = processTime;
+
+    const inputStationData: InputStationData = reactive({
       start: {
         inputText: "",
         placeholder: "出發車站（e.g. 新竹）",
         selectedStation: "",
         filterStationList: computed(() => {
-          if (formData.start.inputText) {
+          if (inputStationData.start.inputText) {
             return stationList.filter(station =>
-              station.includes(formData.start.inputText)
+              station.includes(inputStationData.start.inputText)
             );
           } else {
             return stationList;
@@ -142,61 +150,70 @@ export default defineComponent({
         placeholder: "抵達車站（e.g. 台北）",
         selectedStation: "",
         filterStationList: computed(() => {
-          if (formData.end.inputText) {
+          if (inputStationData.end.inputText) {
             return stationList.filter(station =>
-              station.includes(formData.end.inputText)
+              station.includes(inputStationData.end.inputText)
             );
           } else {
             return stationList;
           }
         })
-      },
-      date: {
-        inputText: getNowDate()
-      },
-      time: {
-        inputText: getNowTime()
+      }
+    });
+    const inputDatetimeData = reactive({
+      datetime: {
+        inputText: new Date()
       }
     });
     const formAction = reactive({
       setNowSelected: (selected: string) => {
+        if (nowSelected.value === selected) {
+          nowSelected.value = "";
+          return;
+        }
+
         nowSelected.value = selected;
 
         if (selected === "start" || selected === "end") {
           setTimeout(() => {
-            inputText.value.focus();
+            stationInputDom.value.focus();
           }, 10);
         }
       },
       setStation: (direction: string, station?: string) => {
         // 如果有帶參數進來代表 user 點擊按鈕
         if (station) {
-          formData[direction].selectedStation = station;
+          inputStationData[direction].selectedStation = station;
 
           // 如果沒帶參數，但搜尋區域已經被過濾到剩一個車站，代表 user 已經查到他想要的車站
-        } else if (formData[direction].filterStationList.length === 1) {
-          formData[direction].selectedStation =
-            formData[direction].filterStationList[0];
+        } else if (inputStationData[direction].filterStationList.length === 1) {
+          inputStationData[direction].selectedStation =
+            inputStationData[direction].filterStationList[0];
         }
 
-        if (station || formData[direction].filterStationList.length === 1) {
+        if (
+          station ||
+          inputStationData[direction].filterStationList.length === 1
+        ) {
           nowSelected.value = "";
-          formData.start.inputText = "";
-          formData.end.inputText = "";
+          inputStationData.start.inputText = "";
+          inputStationData.end.inputText = "";
 
-          if (direction === "start") {
-            nowSelected.value = "end";
-          }
+          // if (direction === "start") {
+          //   nowSelected.value = "end";
+          // }
         }
       },
       resetQueryCondition: () => {
-        formData.start.inputText = "";
-        formData.start.selectedStation = "";
-        formData.end.inputText = "";
-        formData.end.selectedStation = "";
+        inputStationData.start.inputText = "";
+        inputStationData.start.selectedStation = "";
+        inputStationData.end.inputText = "";
+        inputStationData.end.selectedStation = "";
+        inputDatetimeData.datetime.inputText = new Date();
         nowSelected.value = "";
       }
     });
+
     const processStation = (data: Station[]) => {
       data.forEach(item => {
         stationList.push(item.StationName.Zh_tw);
@@ -230,8 +247,12 @@ export default defineComponent({
     return {
       stationList,
       nowSelected,
-      inputText,
-      formData,
+      nowDate,
+      processDateToYyyyMmDd,
+      porcessTimeToHhMm,
+      stationInputDom,
+      inputStationData,
+      inputDatetimeData,
       formAction
     };
   }
