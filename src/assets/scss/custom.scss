@@ -14,6 +14,10 @@ select {
   color: white;
 }
 
+.btn.in-valid {
+  border: 2px solid $old-rose;
+}
+
 .btn-outline-light {
   background-color: transparent;
   border-color: rgb(146, 140, 140);
@@ -38,6 +42,10 @@ select {
   color: white;
 
   &:hover {
+    color: white;
+  }
+
+  &:focus {
     color: white;
   }
 }

@@ -222,8 +222,10 @@ export default defineComponent({
       resetQueryCondition: () => {
         inputStationData.start.inputText = "";
         inputStationData.start.selectedStation = "";
+        inputStationData.start.valid = true;
         inputStationData.end.inputText = "";
         inputStationData.end.selectedStation = "";
+        inputStationData.end.valid = true;
         inputDatetimeData.datetime.selectedDatetime = new Date();
         nowSelected.value = "";
       },
@@ -297,9 +299,5 @@ export default defineComponent({
   .btn {
     width: 100%;
   }
-}
-
-.btn.in-valid {
-  border: 2px solid $old-rose;
 }
 </style>
