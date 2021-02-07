@@ -7,4 +7,5 @@ interface QueryParams {
   placeholder: string;
   selectedStation: string;
   filterStationList: string[];
+  valid: boolean;
 }

@@ -5,7 +5,10 @@
       <div class="col col-md-4 text-center">
         <button
           class="btn btn-outline-light"
-          :class="{ active: nowSelected === 'start' }"
+          :class="{
+            active: nowSelected === 'start',
+            'in-valid': !inputStationData.start.valid
+          }"
           @click="formAction.setNowSelected('start')"
         >
           <div>出發車站</div>
@@ -15,7 +18,10 @@
       <div class="col col-md-4 text-center">
         <button
           class="btn btn-outline-light"
-          :class="{ active: nowSelected === 'end' }"
+          :class="{
+            active: nowSelected === 'end',
+            'in-valid': !inputStationData.end.valid
+          }"
           @click="formAction.setNowSelected('end')"
         >
           <div>抵達車站</div>
@@ -30,8 +36,10 @@
         >
           <div>出發日期</div>
           <div>
-            {{ processDateToYyyyMmDd(inputDatetimeData.datetime.inputText) }}
-            {{ porcessTimeToHhMm(inputDatetimeData.datetime.inputText) }}
+            {{
+              processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime)
+            }}
+            {{ porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime) }}
           </div>
         </button>
       </div>
@@ -89,13 +97,17 @@
           color="blue"
           is-dark
           :min-date="nowDate"
-          v-model="inputDatetimeData.datetime.inputText"
+          v-model="inputDatetimeData.datetime.selectedDatetime"
         ></date-picker>
       </div>
     </div>
     <!-- 搜尋按鈕 -->
     <div class="text-center mt-4">
-      <button type="button" class="btn btn-light-blue">
+      <button
+        type="button"
+        class="btn btn-light-blue"
+        @click="formAction.query()"
+      >
         搜尋
       </button>
     </div>
@@ -135,6 +147,7 @@ export default defineComponent({
         inputText: "",
         placeholder: "出發車站（e.g. 新竹）",
         selectedStation: "",
+        valid: true,
         filterStationList: computed(() => {
           if (inputStationData.start.inputText) {
             return stationList.filter(station =>
@@ -149,6 +162,7 @@ export default defineComponent({
         inputText: "",
         placeholder: "抵達車站（e.g. 台北）",
         selectedStation: "",
+        valid: true,
         filterStationList: computed(() => {
           if (inputStationData.end.inputText) {
             return stationList.filter(station =>
@@ -162,7 +176,7 @@ export default defineComponent({
     });
     const inputDatetimeData = reactive({
       datetime: {
-        inputText: new Date()
+        selectedDatetime: new Date()
       }
     });
     const formAction = reactive({
@@ -195,6 +209,7 @@ export default defineComponent({
           station ||
           inputStationData[direction].filterStationList.length === 1
         ) {
+          inputStationData[direction].valid = true;
           nowSelected.value = "";
           inputStationData.start.inputText = "";
           inputStationData.end.inputText = "";
@@ -209,8 +224,18 @@ export default defineComponent({
         inputStationData.start.selectedStation = "";
         inputStationData.end.inputText = "";
         inputStationData.end.selectedStation = "";
-        inputDatetimeData.datetime.inputText = new Date();
+        inputDatetimeData.datetime.selectedDatetime = new Date();
         nowSelected.value = "";
+      },
+      query: () => {
+        inputStationData.start.valid = inputStationData.start.selectedStation
+          ? true
+          : false;
+        inputStationData.end.valid = inputStationData.end.selectedStation
+          ? true
+          : false;
+        if (!inputStationData.start.valid || !inputStationData.end.valid)
+          return;
       }
     });
 
@@ -272,5 +297,9 @@ export default defineComponent({
   .btn {
     width: 100%;
   }
+}
+
+.btn.in-valid {
+  border: 2px solid $middle-red;
 }
 </style>
