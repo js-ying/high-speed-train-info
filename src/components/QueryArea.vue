@@ -300,6 +300,6 @@ export default defineComponent({
 }
 
 .btn.in-valid {
-  border: 2px solid $middle-red;
+  border: 2px solid $old-rose;
 }
 </style>
