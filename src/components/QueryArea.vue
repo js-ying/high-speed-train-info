@@ -117,6 +117,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, Ref, ref } from "vue";
+import { useStore } from "vuex";
 import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
 import TimeTable from "@/components/TimeTable.vue";
@@ -133,6 +134,8 @@ export default defineComponent({
   components: { DatePicker, TimeTable },
   setup() {
     const axios = require("axios").default;
+
+    const store = useStore();
 
     const stationList: SelectedStation[] = reactive([]);
 
@@ -250,6 +253,7 @@ export default defineComponent({
         return true;
       },
       query: async () => {
+        store.commit("showLoading");
         const checkSucess = await formAction.checkEmpty();
         if (checkSucess) {
           timeTableDataList.value = await getOdTimeTableService(
@@ -259,6 +263,7 @@ export default defineComponent({
             porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
           );
         }
+        store.commit("hideLoading");
       }
     });
 
