@@ -111,7 +111,7 @@
         搜尋
       </button>
     </div>
-    <time-table :dataList="timeTableDataList" class="mt-3" />
+    <time-table :dataList="timeTableDataList" class="mt-4" />
   </div>
 </template>
 
@@ -123,7 +123,7 @@ import TimeTable from "@/components/TimeTable.vue";
 import getNowDate from "@/services/get-now-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
-import getOdTimeTable from "@/services/get-od-time-table";
+import getOdTimeTableService from "@/services/get-od-time-table-service";
 import { SelectedStation, Station } from "@/types/station";
 import InputStationData from "@/types/input-station-data";
 import { OdTimeTable } from "@/types/od-time-table";
@@ -252,10 +252,11 @@ export default defineComponent({
       query: async () => {
         const checkSucess = await formAction.checkEmpty();
         if (checkSucess) {
-          timeTableDataList.value = await getOdTimeTable(
+          timeTableDataList.value = await getOdTimeTableService(
             inputStationData.start.selectedStation.id,
             inputStationData.end.selectedStation.id,
-            processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime)
+            processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime),
+            porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
           );
         }
       }
