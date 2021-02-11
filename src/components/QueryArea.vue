@@ -137,6 +137,8 @@ export default defineComponent({
 
     const store = useStore();
 
+    const myStorage = window.localStorage;
+
     const stationList: SelectedStation[] = reactive([]);
 
     const nowSelected = ref("");
@@ -253,6 +255,60 @@ export default defineComponent({
 
         return true;
       },
+      setLocalStorage() {
+        if (myStorage.selectedStation) {
+          inputStationData.start.selectedStation = JSON.parse(
+            myStorage.selectedStation
+          ).start;
+          inputStationData.end.selectedStation = JSON.parse(
+            myStorage.selectedStation
+          ).end;
+        }
+      },
+      saveLocalStorage() {
+        myStorage.setItem(
+          "selectedStation",
+          JSON.stringify({
+            start: inputStationData.start.selectedStation,
+            end: inputStationData.end.selectedStation
+          })
+        );
+      },
+      saveHistoryLocalStorage() {
+        // let historySelectedList = [];
+        // if (myStorage.historySelectedList) {
+        //   historySelectedList = JSON.parse(myStorage.historySelectedList);
+        //   if (historySelectedList.length > 5) {
+        //     historySelectedList.shift();
+        //     // historySelectedList = [];
+        //   }
+        // }
+        // const nowSelected = [this.selected.start, this.selected.end];
+        // let isDuplicate = false;
+        // let duplicateIndex;
+        // if (historySelectedList.length > 0) {
+        //   historySelectedList.forEach((historySelected, index) => {
+        //     if (
+        //       JSON.stringify(historySelected) === JSON.stringify(nowSelected)
+        //     ) {
+        //       isDuplicate = true;
+        //       duplicateIndex = index;
+        //     }
+        //   });
+        // }
+        // if (isDuplicate) {
+        //   historySelectedList.splice(duplicateIndex, 1);
+        // }
+        // historySelectedList.push(nowSelected);
+        // myStorage.setItem(
+        //   "historySelectedList",
+        //   JSON.stringify(historySelectedList)
+        // );
+      },
+      setHistoryToSelected() {
+        // inputStationData.start.selectedStation = JSON.parse(JSON.stringify(historySelected[0]));
+        // inputStationData.end.selectedStation = JSON.parse(JSON.stringify(historySelected[1]));
+      },
       query: async () => {
         store.commit("showLoading");
         nowSelected.value = "";
@@ -264,6 +320,8 @@ export default defineComponent({
             processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime),
             porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
           );
+
+          formAction.saveLocalStorage();
         }
         store.commit("hideLoading");
       }
@@ -296,6 +354,7 @@ export default defineComponent({
 
     onMounted(() => {
       getStationList();
+      formAction.setLocalStorage();
     });
 
     return {
