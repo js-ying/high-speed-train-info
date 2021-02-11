@@ -255,6 +255,7 @@ export default defineComponent({
       },
       query: async () => {
         store.commit("showLoading");
+        nowSelected.value = "";
         const checkSucess = await formAction.checkEmpty();
         if (checkSucess) {
           timeTableDataList.value = await getOdTimeTableService(
