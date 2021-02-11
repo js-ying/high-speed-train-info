@@ -20,7 +20,7 @@ export default defineComponent({
     const queryArea: any = ref(null);
 
     const reset = () => {
-      queryArea.value.formAction.resetQueryCondition();
+      queryArea.value.formAction.reset();
     };
 
     return {

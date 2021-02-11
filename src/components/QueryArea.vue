@@ -229,7 +229,7 @@ export default defineComponent({
           // }
         }
       },
-      resetQueryCondition: () => {
+      reset: () => {
         inputStationData.start.inputText = "";
         inputStationData.start.selectedStation = new SelectedStation();
         inputStationData.start.valid = true;
@@ -238,6 +238,7 @@ export default defineComponent({
         inputStationData.end.valid = true;
         inputDatetimeData.datetime.selectedDatetime = new Date();
         nowSelected.value = "";
+        timeTableDataList.value = [];
       },
       checkEmpty: () => {
         inputStationData.start.valid = inputStationData.start.selectedStation
