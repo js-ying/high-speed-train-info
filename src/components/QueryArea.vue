@@ -111,6 +111,11 @@
         搜尋
       </button>
     </div>
+    <query-history
+      v-if="timeTableDataList.length <= 0"
+      class="mt-4"
+      @setParentSelected="formAction.setHistoryToSelected"
+    />
     <time-table :dataList="timeTableDataList" class="mt-4" />
   </div>
 </template>
@@ -121,6 +126,7 @@ import { useStore } from "vuex";
 import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
 import TimeTable from "@/components/TimeTable.vue";
+import QueryHistory from "@/components/QueryHistory.vue";
 import getNowDate from "@/services/get-now-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
@@ -131,7 +137,7 @@ import { OdTimeTable } from "@/types/od-time-table";
 
 export default defineComponent({
   name: "QueryArea",
-  components: { DatePicker, TimeTable },
+  components: { DatePicker, QueryHistory, TimeTable },
   setup() {
     const axios = require("axios").default;
 
@@ -275,39 +281,40 @@ export default defineComponent({
         );
       },
       saveHistoryLocalStorage() {
-        // let historySelectedList = [];
-        // if (myStorage.historySelectedList) {
-        //   historySelectedList = JSON.parse(myStorage.historySelectedList);
-        //   if (historySelectedList.length > 5) {
-        //     historySelectedList.shift();
-        //     // historySelectedList = [];
-        //   }
-        // }
-        // const nowSelected = [this.selected.start, this.selected.end];
-        // let isDuplicate = false;
-        // let duplicateIndex;
-        // if (historySelectedList.length > 0) {
-        //   historySelectedList.forEach((historySelected, index) => {
-        //     if (
-        //       JSON.stringify(historySelected) === JSON.stringify(nowSelected)
-        //     ) {
-        //       isDuplicate = true;
-        //       duplicateIndex = index;
-        //     }
-        //   });
-        // }
-        // if (isDuplicate) {
-        //   historySelectedList.splice(duplicateIndex, 1);
-        // }
-        // historySelectedList.push(nowSelected);
-        // myStorage.setItem(
-        //   "historySelectedList",
-        //   JSON.stringify(historySelectedList)
-        // );
+        let queryHistoryList: SelectedStation[][] = [];
+        if (myStorage.queryHistoryList) {
+          queryHistoryList = JSON.parse(myStorage.queryHistoryList);
+          if (queryHistoryList.length > 5) {
+            queryHistoryList.shift();
+          }
+        }
+
+        const queryThisTime = [
+          inputStationData.start.selectedStation,
+          inputStationData.end.selectedStation
+        ];
+
+        let isDuplicate = false;
+        let duplicateIndex = NaN;
+        if (queryHistoryList.length > 0) {
+          queryHistoryList.forEach((queryHistory, index: number) => {
+            if (
+              JSON.stringify(queryHistory) === JSON.stringify(queryThisTime)
+            ) {
+              isDuplicate = true;
+              duplicateIndex = index;
+            }
+          });
+        }
+        if (isDuplicate) {
+          queryHistoryList.splice(duplicateIndex, 1);
+        }
+        queryHistoryList.push(queryThisTime);
+        myStorage.setItem("queryHistoryList", JSON.stringify(queryHistoryList));
       },
-      setHistoryToSelected() {
-        // inputStationData.start.selectedStation = JSON.parse(JSON.stringify(historySelected[0]));
-        // inputStationData.end.selectedStation = JSON.parse(JSON.stringify(historySelected[1]));
+      setHistoryToSelected(clickedHistory: SelectedStation[]) {
+        inputStationData.start.selectedStation = clickedHistory[0];
+        inputStationData.end.selectedStation = clickedHistory[1];
       },
       query: async () => {
         store.commit("showLoading");
@@ -322,6 +329,7 @@ export default defineComponent({
           );
 
           formAction.saveLocalStorage();
+          formAction.saveHistoryLocalStorage();
         }
         store.commit("hideLoading");
       }

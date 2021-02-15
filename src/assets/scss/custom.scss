@@ -14,6 +14,12 @@ select {
   color: white;
 }
 
+.form-control {
+  &:focus {
+    box-shadow: 0 0 0 0.25rem #81a4cd6a;
+  }
+}
+
 .btn.in-valid {
   border: 2px solid $old-rose;
 }
