@@ -26,7 +26,7 @@ select {
 
 .btn-outline-light {
   background-color: transparent;
-  border-color: rgb(146, 140, 140);
+  border-color: $light-gray;
   color: white;
 
   &:hover {

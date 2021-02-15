@@ -2,7 +2,7 @@
   <div id="query-area">
     <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
     <div class="row" id="query-condition-row">
-      <div class="col col-md-4 text-center">
+      <div class="col col-md-4 px-4 text-center position-relative">
         <button
           class="btn btn-outline-light"
           :class="{
@@ -14,8 +14,11 @@
           <div>出發車站</div>
           <div>{{ inputStationData.start.selectedStation.name }}</div>
         </button>
+        <reverse-train-station-button
+          @swapSeletedStation="formAction.swapSeletedStation"
+        />
       </div>
-      <div class="col col-md-4 text-center">
+      <div class="col col-md-4 px-4 text-center">
         <button
           class="btn btn-outline-light"
           :class="{
@@ -28,7 +31,7 @@
           <div>{{ inputStationData.end.selectedStation.name }}</div>
         </button>
       </div>
-      <div class="col-12 col-md-4 text-center mt-4 mt-md-0">
+      <div class="col-12 col-md-4 px-4 mt-4 mt-md-0 text-center">
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'datetime' }"
@@ -114,7 +117,7 @@
     <query-history
       v-if="timeTableDataList.length <= 0"
       class="mt-4"
-      @setParentSelected="formAction.setHistoryToSelected"
+      @setHistoryToSelected="formAction.setHistoryToSelected"
     />
     <time-table :dataList="timeTableDataList" class="mt-4" />
   </div>
@@ -127,6 +130,7 @@ import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
 import TimeTable from "@/components/TimeTable.vue";
 import QueryHistory from "@/components/QueryHistory.vue";
+import ReverseTrainStationButton from "@/components/ReverseTrainStationButton.vue";
 import getNowDate from "@/services/get-now-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
@@ -137,7 +141,12 @@ import { OdTimeTable } from "@/types/od-time-table";
 
 export default defineComponent({
   name: "QueryArea",
-  components: { DatePicker, QueryHistory, TimeTable },
+  components: {
+    DatePicker,
+    QueryHistory,
+    TimeTable,
+    ReverseTrainStationButton
+  },
   setup() {
     const axios = require("axios").default;
 
@@ -332,6 +341,21 @@ export default defineComponent({
           formAction.saveHistoryLocalStorage();
         }
         store.commit("hideLoading");
+      },
+      swapSeletedStation: () => {
+        if (
+          !Object.values(inputStationData.start.selectedStation).includes(
+            null
+          ) &&
+          !Object.values(inputStationData.end.selectedStation).includes(null)
+        ) {
+          const start = {},
+            end = {};
+          Object.assign(start, inputStationData.start.selectedStation);
+          Object.assign(end, inputStationData.end.selectedStation);
+          Object.assign(inputStationData.start.selectedStation, end);
+          Object.assign(inputStationData.end.selectedStation, start);
+        }
       }
     });
 

@@ -8,7 +8,7 @@
       >
         <button
           class="btn btn-gray btn-query-history"
-          @click="setParentSelected(queryHistory)"
+          @click="setHistoryToSelected(queryHistory)"
         >
           {{ queryHistory[0].name }} → {{ queryHistory[1].name }}
         </button>
@@ -40,7 +40,7 @@ import { SelectedStation } from "@/types/station";
 export default defineComponent({
   name: "QueryHistory",
   components: {},
-  emits: ["setParentSelected"],
+  emits: ["setHistoryToSelected"],
   setup(props, { emit }) {
     const myStorage = window.localStorage;
 
@@ -50,8 +50,8 @@ export default defineComponent({
         : []
     );
 
-    const setParentSelected = (clickedHistory: SelectedStation[]) => {
-      emit("setParentSelected", clickedHistory);
+    const setHistoryToSelected = (clickedHistory: SelectedStation[]) => {
+      emit("setHistoryToSelected", clickedHistory);
     };
 
     const removeAllHistory = () => {
@@ -61,7 +61,7 @@ export default defineComponent({
 
     return {
       queryHistoryList,
-      setParentSelected,
+      setHistoryToSelected,
       removeAllHistory
     };
   }
