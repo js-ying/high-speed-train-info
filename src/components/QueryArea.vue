@@ -2,7 +2,7 @@
   <div id="query-area">
     <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
     <div class="row" id="query-condition-row">
-      <div class="col col-md-4 px-4 text-center position-relative">
+      <div class="col col-md-4 pe-4 text-center position-relative">
         <button
           class="btn btn-outline-light"
           :class="{
@@ -18,7 +18,7 @@
           @swapSeletedStation="formAction.swapSeletedStation"
         />
       </div>
-      <div class="col col-md-4 px-4 text-center">
+      <div class="col col-md-4 ps-4 pe-md-3 text-center">
         <button
           class="btn btn-outline-light"
           :class="{
@@ -31,7 +31,7 @@
           <div>{{ inputStationData.end.selectedStation.name }}</div>
         </button>
       </div>
-      <div class="col-12 col-md-4 px-4 mt-4 mt-md-0 text-center">
+      <div class="col-12 col-md-4 ps-md-4 mt-4 mt-md-0 text-center">
         <button
           class="btn btn-outline-light"
           :class="{ active: nowSelected === 'datetime' }"
