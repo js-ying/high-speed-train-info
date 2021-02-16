@@ -283,9 +283,13 @@ export default defineComponent({
         }
       },
       setHistoryToSelected(clickedHistory: SelectedStation[]) {
-        inputStationData.start.selectedStation = clickedHistory[0];
+        inputStationData.start.selectedStation = JSON.parse(
+          JSON.stringify(clickedHistory[0])
+        );
         inputStationData.start.valid = true;
-        inputStationData.end.selectedStation = clickedHistory[1];
+        inputStationData.end.selectedStation = JSON.parse(
+          JSON.stringify(clickedHistory[1])
+        );
         inputStationData.end.valid = true;
       },
       query: async () => {
@@ -314,10 +318,22 @@ export default defineComponent({
         ) {
           const start = {},
             end = {};
-          Object.assign(start, inputStationData.start.selectedStation);
-          Object.assign(end, inputStationData.end.selectedStation);
-          Object.assign(inputStationData.start.selectedStation, end);
-          Object.assign(inputStationData.end.selectedStation, start);
+          Object.assign(
+            start,
+            JSON.parse(JSON.stringify(inputStationData.start.selectedStation))
+          );
+          Object.assign(
+            end,
+            JSON.parse(JSON.stringify(inputStationData.end.selectedStation))
+          );
+          Object.assign(
+            inputStationData.start.selectedStation,
+            JSON.parse(JSON.stringify(end))
+          );
+          Object.assign(
+            inputStationData.end.selectedStation,
+            JSON.parse(JSON.stringify(start))
+          );
         }
       }
     });
@@ -329,7 +345,6 @@ export default defineComponent({
     };
 
     async function getStationList() {
-      console.log("getStationList");
       try {
         // const response = await axios.get(
         //   "https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station",
