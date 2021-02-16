@@ -1,6 +1,9 @@
 <template>
-  <div class="row text-center" id="query-hisotry">
+  <div class="row text-center" id="query-history">
     <template v-if="queryHistoryList.length > 0">
+      <div class="col-12 mb-2" id="history-text">
+        歷史查詢：共 {{ queryHistoryList.length }} / 6 筆
+      </div>
       <div
         class="col-12 mb-2"
         v-for="(queryHistory, $index) in queryHistoryList"
@@ -69,7 +72,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-#query-hisotry {
+#query-history {
   .btn-query-history {
     padding: 0.1rem 0.5rem;
   }
@@ -77,6 +80,11 @@ export default defineComponent({
   .btn-remove-all-history {
     font-size: 1.25rem;
     cursor: pointer;
+  }
+
+  #history-text {
+    color: $light-gray;
+    font-size: 0.9rem;
   }
 }
 </style>

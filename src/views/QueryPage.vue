@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
 import QueryArea from "@/components/QueryArea.vue";
 
 export default defineComponent({
@@ -17,10 +18,12 @@ export default defineComponent({
     QueryArea
   },
   setup() {
+    const router = useRouter();
     const queryArea: any = ref(null);
 
     const reset = () => {
       queryArea.value.formAction.reset();
+      router.push({ path: "/" });
     };
 
     return {

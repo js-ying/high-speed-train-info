@@ -1,11 +1,24 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import QueryPage from "../views/QueryPage.vue";
+import QueryPage from "@/views/QueryPage.vue";
+import QueryResult from "@/views/QueryResult.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "QueryPage",
-    component: QueryPage
+    component: QueryPage,
+    children: [
+      {
+        path: "/search",
+        name: "QueryResult",
+        component: QueryResult
+      }
+      // {
+      //   path: 'train-detail',
+      //   name: 'TrainTimeDetail',
+      //   component: TrainTimeDetail,
+      // },
+    ]
   },
   {
     path: "/about",

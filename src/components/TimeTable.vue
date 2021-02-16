@@ -1,5 +1,5 @@
 <template>
-  <div class="row" id="time-table">
+  <div id="time-table">
     <div class="col-12 mb-4" v-for="(data, index) in dataList" :key="index">
       <button class="btn btn-outline-light">
         {{ data.TrainDate }} {{ data.OriginStopTime.DepartureTime }} -

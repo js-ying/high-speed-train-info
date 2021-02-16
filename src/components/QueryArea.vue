@@ -114,27 +114,30 @@
         搜尋
       </button>
     </div>
+    <!-- 查詢歷史 -->
     <query-history
-      v-if="timeTableDataList.length <= 0"
+      v-if="router.currentRoute.value.path === '/'"
       class="mt-4"
       @setHistoryToSelected="formAction.setHistoryToSelected"
     />
-    <time-table :dataList="timeTableDataList" class="mt-4" />
+    <div v-if="store.state.stationData">
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, Ref, ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
-import TimeTable from "@/components/TimeTable.vue";
 import QueryHistory from "@/components/QueryHistory.vue";
+// import TimeTable from "@/components/TimeTable.vue";
 import ReverseTrainStationButton from "@/components/ReverseTrainStationButton.vue";
 import getNowDate from "@/services/get-now-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
-import getOdTimeTableService from "@/services/get-od-time-table-service";
 import { SelectedStation, Station } from "@/types/station";
 import InputStationData from "@/types/input-station-data";
 import { OdTimeTable } from "@/types/od-time-table";
@@ -144,11 +147,10 @@ export default defineComponent({
   components: {
     DatePicker,
     QueryHistory,
-    TimeTable,
     ReverseTrainStationButton
   },
   setup() {
-    const axios = require("axios").default;
+    const router = useRouter();
 
     const store = useStore();
 
@@ -280,67 +282,28 @@ export default defineComponent({
           ).end;
         }
       },
-      saveLocalStorage() {
-        myStorage.setItem(
-          "selectedStation",
-          JSON.stringify({
-            start: inputStationData.start.selectedStation,
-            end: inputStationData.end.selectedStation
-          })
-        );
-      },
-      saveHistoryLocalStorage() {
-        let queryHistoryList: SelectedStation[][] = [];
-        if (myStorage.queryHistoryList) {
-          queryHistoryList = JSON.parse(myStorage.queryHistoryList);
-          if (queryHistoryList.length > 5) {
-            queryHistoryList.shift();
-          }
-        }
-
-        const queryThisTime = [
-          inputStationData.start.selectedStation,
-          inputStationData.end.selectedStation
-        ];
-
-        let isDuplicate = false;
-        let duplicateIndex = NaN;
-        if (queryHistoryList.length > 0) {
-          queryHistoryList.forEach((queryHistory, index: number) => {
-            if (
-              JSON.stringify(queryHistory) === JSON.stringify(queryThisTime)
-            ) {
-              isDuplicate = true;
-              duplicateIndex = index;
-            }
-          });
-        }
-        if (isDuplicate) {
-          queryHistoryList.splice(duplicateIndex, 1);
-        }
-        queryHistoryList.push(queryThisTime);
-        myStorage.setItem("queryHistoryList", JSON.stringify(queryHistoryList));
-      },
       setHistoryToSelected(clickedHistory: SelectedStation[]) {
         inputStationData.start.selectedStation = clickedHistory[0];
+        inputStationData.start.valid = true;
         inputStationData.end.selectedStation = clickedHistory[1];
+        inputStationData.end.valid = true;
       },
       query: async () => {
-        store.commit("showLoading");
         nowSelected.value = "";
         const checkSucess = await formAction.checkEmpty();
         if (checkSucess) {
-          timeTableDataList.value = await getOdTimeTableService(
-            inputStationData.start.selectedStation.id,
-            inputStationData.end.selectedStation.id,
-            processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime),
-            porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
-          );
-
-          formAction.saveLocalStorage();
-          formAction.saveHistoryLocalStorage();
+          router.push({
+            name: "QueryResult",
+            query: {
+              s: inputStationData.start.selectedStation.name,
+              e: inputStationData.end.selectedStation.name,
+              d: processDateToYyyyMmDd(
+                inputDatetimeData.datetime.selectedDatetime
+              ),
+              t: porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
+            }
+          });
         }
-        store.commit("hideLoading");
       },
       swapSeletedStation: () => {
         if (
@@ -366,6 +329,7 @@ export default defineComponent({
     };
 
     async function getStationList() {
+      console.log("getStationList");
       try {
         // const response = await axios.get(
         //   "https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station",
@@ -375,10 +339,10 @@ export default defineComponent({
         //     }
         //   }
         // );
-
-        // console.log(response.data);
-        // processStation(response.data);
-        processStation(fakeStation);
+        // store.commit("setStationData", response.data);
+        // processStation(store.state.stationData);
+        store.commit("setStationData", fakeStation);
+        processStation(store.state.stationData);
       } catch (error) {
         console.error(error);
       }
@@ -390,6 +354,8 @@ export default defineComponent({
     });
 
     return {
+      router,
+      store,
       stationList,
       nowSelected,
       nowDate,
