@@ -1,15 +1,15 @@
+import { queryResult } from "@/assets/fake-data/query-result";
 import axios from "axios";
-import { useStore } from "vuex";
+import { Store, useStore } from "vuex";
 import { OdTimeTable } from "../types/od-time-table";
 
 export default async function getOdTimeTableService(
+  store: Store<any>,
   startStation: string,
   endStation: string,
   date: string,
   time: string
 ): Promise<OdTimeTable[]> {
-  const store = useStore();
-
   store.commit("showLoading");
 
   const response = await axios.get(
@@ -19,4 +19,5 @@ export default async function getOdTimeTableService(
   store.commit("hideLoading");
 
   return response.data;
+  // return queryResult;
 }
