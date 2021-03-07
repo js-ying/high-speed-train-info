@@ -3,6 +3,7 @@ import { createStore } from "vuex";
 export default createStore({
   state: {
     loading: false,
+    loadingList: [] as any,
     stationData: null
   },
   mutations: {
@@ -10,10 +11,16 @@ export default createStore({
       state.stationData = payload;
     },
     showLoading(state) {
-      state.loading = true;
+      state.loadingList.push("show");
+      if (state.loadingList.length <= 1) {
+        state.loading = true;
+      }
     },
     hideLoading(state) {
-      state.loading = false;
+      state.loadingList.pop();
+      if (state.loadingList.length <= 0) {
+        state.loading = false;
+      }
     }
   },
   actions: {},
