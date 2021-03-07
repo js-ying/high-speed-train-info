@@ -1,22 +1,36 @@
 <template>
   <div id="time-table">
-    <div class="col-12 d-flex justify-content-between align-items-center mb-3">
-      <div v-if="fareList && fareList[0]">
-        <template v-for="(fare, $index) in fareList[0].Fares" :key="$index">
-          <span class="badge rounded-pill bg-gray me-2 fare"
-            >{{ fare.TicketType }} {{ fare.Price }} 元</span
-          >
-        </template>
+    <div class="col-12 mb-3">
+      <div class="row">
+        <div
+          class="col-12 col-md-10 mb-2 mb-md-0 d-flex align-items-center"
+          v-if="fareList && fareList[0]"
+        >
+          <template v-for="(fare, $index) in fareList[0].Fares" :key="$index">
+            <span class="badge rounded-pill bg-gray me-2 fare"
+              >{{ fare.TicketType }} {{ fare.Price }} 元</span
+            >
+          </template>
+        </div>
+        <div
+          class="col-12 col-md-2 d-flex justify-content-end align-items-center"
+          id="data-list-length"
+        >
+          共 {{ dataList.length }} 筆
+        </div>
       </div>
-      <div id="data-list-length">共 {{ dataList.length }} 筆</div>
     </div>
     <div class="col-12 mb-3" v-for="(data, index) in dataList" :key="index">
       <button class="btn btn-outline-light">
         <div class="row py-1">
-          <div class="col-3">
-            {{ data.DailyTrainInfo.TrainNo }}<br />
-            {{ data.DailyTrainInfo.StartingStationName.Zh_tw }} -
-            {{ data.DailyTrainInfo.EndingStationName.Zh_tw }}
+          <div
+            class="col-3 d-flex justify-content-center align-items-center train-table-left-side"
+          >
+            <div>
+              {{ data.DailyTrainInfo.TrainNo }}<br />
+              {{ data.DailyTrainInfo.StartingStationName.Zh_tw }} -
+              {{ data.DailyTrainInfo.EndingStationName.Zh_tw }}
+            </div>
           </div>
           <div class="col-6 d-flex justify-content-center align-items-center">
             <div>
@@ -79,6 +93,11 @@ export default defineComponent({
     }
   }
 
+  #data-list-length {
+    color: $taupe-gray;
+    font-size: 0.9rem;
+  }
+
   .btn-outline-light {
     &:hover {
       background-color: transparent;
@@ -86,14 +105,15 @@ export default defineComponent({
     }
   }
 
-  #data-list-length {
-    color: $taupe-gray;
-    font-size: 0.9rem;
-  }
-
   .time-diff {
     color: $taupe-gray;
     font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .train-table-left-side {
+    font-size: 75%;
   }
 }
 </style>
