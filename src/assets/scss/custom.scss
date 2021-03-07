@@ -32,11 +32,12 @@ select {
 
 .btn-outline-light {
   background-color: transparent;
-  border-color: $light-gray;
+  border-color: $taupe-gray;
   color: white;
 
   &:hover {
     background-color: $ice-berg;
+    color: white;
   }
 
   &.active {

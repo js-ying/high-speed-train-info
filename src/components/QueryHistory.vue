@@ -83,7 +83,7 @@ export default defineComponent({
   }
 
   #history-text {
-    color: $light-gray;
+    color: $taupe-gray;
     font-size: 0.9rem;
   }
 }

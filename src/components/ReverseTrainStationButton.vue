@@ -52,7 +52,7 @@ export default defineComponent({
   height: 40px;
   font-size: 1.3rem;
   cursor: pointer;
-  color: $light-gray;
+  color: $taupe-gray;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
