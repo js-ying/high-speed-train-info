@@ -1,6 +1,7 @@
 <template>
   <div class="mt-4" id="query-result">
     <time-table
+      :fareList="fareList"
       :dataList="timeTableDataList"
       :queryDate="queryParams.date"
       v-if="!noTrain"
@@ -19,10 +20,12 @@
 import { defineComponent, onMounted, reactive, Ref, ref } from "vue";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
-import getOdTimeTableService from "@/services/get-od-time-table-service";
-import getStationIdService from "@/services/get-station-id-service";
 import { SelectedStation } from "@/types/station";
 import { OdTimeTable } from "@/types/od-time-table";
+import { OdFare } from "@/types/od-fare";
+import getOdTimeTableService from "@/services/get-od-time-table-service";
+import getStationIdService from "@/services/get-station-id-service";
+import getOdFareService from "@/services/get-od-fare-service";
 import TimeTable from "@/components/TimeTable.vue";
 
 export default defineComponent({
@@ -34,6 +37,7 @@ export default defineComponent({
     const myStorage = window.localStorage;
 
     const noTrain = ref(false);
+    const fareList: Ref<OdFare[]> = ref([]);
     const timeTableDataList: Ref<OdTimeTable[]> = ref([]);
 
     const queryParams = reactive({
@@ -116,6 +120,12 @@ export default defineComponent({
       timeTableDataList.value = [];
       noTrain.value = false;
 
+      fareList.value = await getOdFareService(
+        store,
+        queryParams.start.selectedStation.id,
+        queryParams.end.selectedStation.id
+      );
+
       timeTableDataList.value = await getOdTimeTableService(
         store,
         queryParams.start.selectedStation.id,
@@ -146,6 +156,7 @@ export default defineComponent({
 
     return {
       noTrain,
+      fareList,
       timeTableDataList,
       queryParams
     };
