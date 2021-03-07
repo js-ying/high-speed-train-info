@@ -1,6 +1,10 @@
 <template>
   <div class="mt-4" id="query-result">
-    <time-table :dataList="timeTableDataList" v-if="!noTrain" />
+    <time-table
+      :dataList="timeTableDataList"
+      :queryDate="queryParams.date"
+      v-if="!noTrain"
+    />
     <div class="alert alert-gray" v-else>
       沒有找到高鐵車次！有以下兩種可能：
       <ol class="mt-2 mb-0">
@@ -142,7 +146,8 @@ export default defineComponent({
 
     return {
       noTrain,
-      timeTableDataList
+      timeTableDataList,
+      queryParams
     };
   }
 });
