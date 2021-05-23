@@ -71,9 +71,46 @@
             v-for="(stopTime, $index) in clickedTraintimeDetail.StopTimes"
             :key="$index"
           >
-            <div class="col-4">{{ stopTime.StationName.Zh_tw }}</div>
-            <div class="col-4">{{ stopTime.ArrivalTime }}</div>
-            <div class="col-4">{{ stopTime.DepartureTime }}</div>
+            <div
+              class="col-4"
+              :class="{
+                'selected-station-text':
+                  selectedStation.start.name === stopTime.StationName.Zh_tw ||
+                  selectedStation.end.name === stopTime.StationName.Zh_tw
+              }"
+            >
+              <span
+                class="dot-text"
+                v-if="
+                  selectedStation.start.name === stopTime.StationName.Zh_tw ||
+                    selectedStation.end.name === stopTime.StationName.Zh_tw
+                "
+                >{{ stopTime.StationName.Zh_tw }}</span
+              >
+              <span v-else>
+                {{ stopTime.StationName.Zh_tw }}
+              </span>
+            </div>
+            <div
+              class="col-4"
+              :class="{
+                'selected-station-text':
+                  selectedStation.start.name === stopTime.StationName.Zh_tw ||
+                  selectedStation.end.name === stopTime.StationName.Zh_tw
+              }"
+            >
+              {{ stopTime.ArrivalTime }}
+            </div>
+            <div
+              class="col-4"
+              :class="{
+                'selected-station-text':
+                  selectedStation.start.name === stopTime.StationName.Zh_tw ||
+                  selectedStation.end.name === stopTime.StationName.Zh_tw
+              }"
+            >
+              {{ stopTime.DepartureTime }}
+            </div>
           </div>
         </template>
       </div>
@@ -103,6 +140,7 @@ export default defineComponent({
     const route = useRoute();
 
     const clickedTraintimeDetail: Ref<GeneralTimetable | null> = ref(null);
+    const selectedStation = ref("");
 
     const dataLose: Ref<boolean> = ref(false);
 
@@ -143,6 +181,10 @@ export default defineComponent({
           route.params.clickedTraintimeDetail as string
         );
         console.log(clickedTraintimeDetail.value);
+        selectedStation.value = JSON.parse(
+          localStorage.getItem("selectedStation") as string
+        );
+        console.log(selectedStation.value);
       } else {
         dataLose.value = true;
       }
@@ -154,7 +196,8 @@ export default defineComponent({
       clickedTraintimeDetail,
       dataLose,
       goBack,
-      getServiceDays
+      getServiceDays,
+      selectedStation
     };
   }
 });
@@ -166,12 +209,34 @@ export default defineComponent({
   font-weight: 700;
 }
 
+#train-note {
+  color: gray;
+  font-size: 0.9rem;
+}
+
 .badge {
   font-size: 0.9rem;
 }
 
-#train-note {
-  color: gray;
-  font-size: 0.9rem;
+.selected-station-text {
+  color: $old-rose;
+
+  .dot-text {
+    position: relative;
+
+    &:before {
+      content: "";
+      display: block;
+      height: 0.65em;
+      width: 0.65em;
+      background: $old-rose;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: -1.35em; // size of bullet
+      transform: translateY(-50%); // vertical alignment
+      font-size: 0.6rem;
+    }
+  }
 }
 </style>
