@@ -218,6 +218,7 @@ export default defineComponent({
 
 .selected-station-text {
   color: $old-rose;
+  font-weight: 700;
 
   .dot-text {
     position: relative;
