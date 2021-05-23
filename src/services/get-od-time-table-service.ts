@@ -2,6 +2,7 @@ import { queryResult } from "@/assets/fake-data/query-result";
 import axios from "axios";
 import { Store, useStore } from "vuex";
 import { OdTimeTable } from "../types/od-time-table";
+import { getAuthorizationHeaderService } from "./get-authorization-header-service";
 
 export default async function getOdTimeTableService(
   store: Store<any>,
@@ -13,7 +14,8 @@ export default async function getOdTimeTableService(
   store.commit("showLoading");
 
   const response = await axios.get(
-    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/OD/${startStation}/to/${endStation}/${date}?&$orderby=OriginStopTime/DepartureTime&$filter=OriginStopTime/DepartureTime ge '${time}'&$format=JSON`
+    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/OD/${startStation}/to/${endStation}/${date}?&$orderby=OriginStopTime/DepartureTime&$filter=OriginStopTime/DepartureTime ge '${time}'&$format=JSON`,
+    { headers: getAuthorizationHeaderService() }
   );
 
   store.commit("hideLoading");

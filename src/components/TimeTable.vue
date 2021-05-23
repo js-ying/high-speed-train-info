@@ -21,7 +21,14 @@
       </div>
     </div>
     <div class="col-12 mb-3" v-for="(data, index) in dataList" :key="index">
-      <button class="btn btn-outline-light">
+      <button
+        class="btn btn-outline-light"
+        @click="
+          openTraintimeDetail(
+            service.getGeneralTrainInfo(data.DailyTrainInfo.TrainNo)
+          )
+        "
+      >
         <div class="row py-1">
           <div
             class="col-3 d-flex justify-content-center align-items-center train-table-left-side"
@@ -61,21 +68,63 @@ import { OdTimeTable } from "@/types/od-time-table";
 import { OdFare } from "@/types/od-fare";
 import getTimeDiffService from "@/services/get-time-diff-service";
 import { defineComponent, PropType, reactive } from "vue";
+import {
+  GeneralTimetable,
+  RailGeneralTimetable
+} from "@/types/rail-general-timetable";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TimeTable",
   components: {},
   props: {
-    fareList: { type: Array as PropType<OdFare[]> },
-    dataList: { type: Array as PropType<OdTimeTable[]> },
-    queryDate: { type: String as PropType<string> }
+    fareList: {
+      type: Array as PropType<OdFare[]>,
+      required: true,
+      defualt: () => []
+    },
+    dataList: {
+      type: Array as PropType<OdTimeTable[]>,
+      required: true,
+      defualt: () => []
+    },
+    queryDate: {
+      type: String as PropType<string>,
+      required: true,
+      defualt: ""
+    },
+    generalTimetable: {
+      type: Array as PropType<RailGeneralTimetable[]>,
+      required: true,
+      defualt: () => []
+    }
   },
-  setup() {
+  setup(props) {
+    const router = useRouter();
+
     const service = reactive({
-      getTimeDiffService: getTimeDiffService
+      getTimeDiffService: getTimeDiffService,
+      getGeneralTrainInfo: (trainNo: string) => {
+        if (props.generalTimetable.length > 0) {
+          return props.generalTimetable.find((gtt: RailGeneralTimetable) => {
+            return gtt.GeneralTimetable.GeneralTrainInfo.TrainNo === trainNo;
+          })?.GeneralTimetable;
+        }
+
+        return null;
+      }
     });
 
-    return { service };
+    const openTraintimeDetail = (data: GeneralTimetable) => {
+      router.push({
+        name: "TraintimeDetail",
+        params: {
+          clickedTraintimeDetail: JSON.stringify(data)
+        }
+      });
+    };
+
+    return { service, openTraintimeDetail };
   }
 });
 </script>
@@ -113,7 +162,7 @@ export default defineComponent({
 
 @media screen and (max-width: 768px) {
   .train-table-left-side {
-    font-size: 75%;
+    font-size: 0.9rem;
   }
 }
 </style>

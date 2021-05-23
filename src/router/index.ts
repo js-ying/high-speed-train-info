@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import QueryPage from "@/views/QueryPage.vue";
 import QueryResult from "@/views/QueryResult.vue";
+import TraintimeDetail from "@/views/TraintimeDetail.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,12 +14,12 @@ const routes: Array<RouteRecordRaw> = [
         name: "QueryResult",
         component: QueryResult
       }
-      // {
-      //   path: 'train-detail',
-      //   name: 'TrainTimeDetail',
-      //   component: TrainTimeDetail,
-      // },
     ]
+  },
+  {
+    path: "/train-detail",
+    name: "TraintimeDetail",
+    component: TraintimeDetail
   },
   {
     path: "/about",

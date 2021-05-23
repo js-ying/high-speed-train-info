@@ -4,6 +4,7 @@
       :fareList="fareList"
       :dataList="timeTableDataList"
       :queryDate="queryParams.date"
+      :generalTimetable="generalTimetable"
       v-if="!noTrain"
     />
     <div class="alert alert-gray" v-else>
@@ -23,10 +24,13 @@ import { useStore } from "vuex";
 import { SelectedStation } from "@/types/station";
 import { OdTimeTable } from "@/types/od-time-table";
 import { OdFare } from "@/types/od-fare";
+import { RailGeneralTimetable } from "@/types/rail-general-timetable";
+import QueryParams from "@/types/query-params";
 import getOdTimeTableService from "@/services/get-od-time-table-service";
 import getStationIdService from "@/services/get-station-id-service";
 import getOdFareService from "@/services/get-od-fare-service";
 import TimeTable from "@/components/TimeTable.vue";
+import getGeneralTimetableService from "@/services/get-general-timetable-service";
 
 export default defineComponent({
   name: "QueryResult",
@@ -39,6 +43,7 @@ export default defineComponent({
     const noTrain = ref(false);
     const fareList: Ref<OdFare[]> = ref([]);
     const timeTableDataList: Ref<OdTimeTable[]> = ref([]);
+    const generalTimetable: Ref<RailGeneralTimetable[]> = ref([]);
 
     const queryParams = reactive({
       start: {
@@ -99,7 +104,7 @@ export default defineComponent({
       }
     });
 
-    const processQueryParams = (data: any) => {
+    const processQueryParams = (data: QueryParams) => {
       queryParams.start.selectedStation.name = data.s as string;
       queryParams.start.selectedStation.id = getStationIdService(
         store.state.stationData,
@@ -114,6 +119,21 @@ export default defineComponent({
 
       queryParams.date = data.d;
       queryParams.time = data.t;
+    };
+
+    const getGeneralTimetable = async () => {
+      if (
+        !sessionStorage.getItem("gernalTimetable") ||
+        sessionStorage.getItem("gernalTimetable") === "{}"
+      ) {
+        const gernalTimetable = await getGeneralTimetableService(store);
+        sessionStorage.setItem(
+          "gernalTimetable",
+          JSON.stringify(gernalTimetable)
+        );
+      }
+
+      return JSON.parse(sessionStorage.getItem("gernalTimetable") || "");
     };
 
     const query = async () => {
@@ -134,6 +154,8 @@ export default defineComponent({
         queryParams.time
       );
 
+      generalTimetable.value = await getGeneralTimetable();
+
       noTrain.value = timeTableDataList.value.length <= 0 ? true : false;
 
       localStorageAction.saveLocalStorage();
@@ -143,14 +165,13 @@ export default defineComponent({
     onBeforeRouteUpdate(async to => {
       // only fetch the user if the id changed as maybe only the query or the hash changed
       if (to.query) {
-        console.log(to.query);
-        processQueryParams(to.query);
+        processQueryParams((to.query as unknown) as QueryParams);
         query();
       }
     });
 
     onMounted(() => {
-      processQueryParams(route.query);
+      processQueryParams((route.query as unknown) as QueryParams);
       query();
     });
 
@@ -158,6 +179,7 @@ export default defineComponent({
       noTrain,
       fareList,
       timeTableDataList,
+      generalTimetable,
       queryParams
     };
   }

@@ -25,4 +25,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+</style>
