@@ -1,15 +1,24 @@
 <template>
   <div id="query-page">
-    <div class="text-center mb-4" id="web-title" @click="reset()">
+    <div
+      class="text-center mb-4"
+      id="web-title"
+      @click="reset()"
+      v-if="route.name !== 'TraintimeDetail'"
+    >
       高鐵時刻查詢
     </div>
-    <query-area ref="queryArea"></query-area>
+    <query-area
+      ref="queryArea"
+      :notReset="notReset"
+      @set-not-reset="setNotReset"
+    ></query-area>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import QueryArea from "@/components/QueryArea.vue";
 
 export default defineComponent({
@@ -19,16 +28,27 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const queryArea: any = ref(null);
+
+    const notReset = ref(true);
 
     const reset = () => {
       queryArea.value.formAction.reset();
+      notReset.value = false;
       router.push({ path: "/" });
     };
 
+    const setNotReset = () => {
+      notReset.value = true;
+    };
+
     return {
+      route,
+      notReset,
       reset,
-      queryArea
+      queryArea,
+      setNotReset
     };
   }
 });

@@ -1,135 +1,154 @@
 <template>
   <div id="query-area">
-    <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
-    <div class="row" id="query-condition-row">
-      <div class="col col-md-4 pe-4 text-center position-relative">
-        <button
-          class="btn btn-outline-light"
-          :class="{
-            active: nowSelected === 'start',
-            'in-valid': !inputStationData.start.valid
-          }"
-          @click="formAction.setNowSelected('start')"
-        >
-          <div>出發車站</div>
-          <div>{{ inputStationData.start.selectedStation.name }}</div>
-        </button>
-        <reverse-train-station-button
-          @swapSeletedStation="formAction.swapSeletedStation"
-        />
+    <template v-if="route.name !== 'TraintimeDetail'">
+      <!-- 查詢條件列（出發車站、抵達車站、出發日期） -->
+      <div class="row" id="query-condition-row">
+        <div class="col col-md-4 pe-4 text-center position-relative">
+          <button
+            class="btn btn-outline-light"
+            :class="{
+              active: nowSelected === 'start',
+              'in-valid': !inputStationData.start.valid
+            }"
+            @click="formAction.setNowSelected('start')"
+          >
+            <div>出發車站</div>
+            <div>{{ inputStationData.start.selectedStation.name }}</div>
+          </button>
+          <reverse-train-station-button
+            @swapSeletedStation="formAction.swapSeletedStation"
+          />
+        </div>
+        <div class="col col-md-4 ps-4 pe-md-3 text-center">
+          <button
+            class="btn btn-outline-light"
+            :class="{
+              active: nowSelected === 'end',
+              'in-valid': !inputStationData.end.valid
+            }"
+            @click="formAction.setNowSelected('end')"
+          >
+            <div>抵達車站</div>
+            <div>{{ inputStationData.end.selectedStation.name }}</div>
+          </button>
+        </div>
+        <div class="col-12 col-md-4 ps-md-4 mt-4 mt-md-0 text-center">
+          <button
+            class="btn btn-outline-light"
+            :class="{ active: nowSelected === 'datetime' }"
+            @click="formAction.setNowSelected('datetime')"
+          >
+            <div>出發日期</div>
+            <div>
+              {{
+                processDateToYyyyMmDd(
+                  inputDatetimeData.datetime.selectedDatetime
+                )
+              }}
+              {{
+                porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime)
+              }}
+            </div>
+          </button>
+        </div>
       </div>
-      <div class="col col-md-4 ps-4 pe-md-3 text-center">
-        <button
-          class="btn btn-outline-light"
-          :class="{
-            active: nowSelected === 'end',
-            'in-valid': !inputStationData.end.valid
-          }"
-          @click="formAction.setNowSelected('end')"
-        >
-          <div>抵達車站</div>
-          <div>{{ inputStationData.end.selectedStation.name }}</div>
-        </button>
-      </div>
-      <div class="col-12 col-md-4 ps-md-4 mt-4 mt-md-0 text-center">
-        <button
-          class="btn btn-outline-light"
-          :class="{ active: nowSelected === 'datetime' }"
-          @click="formAction.setNowSelected('datetime')"
-        >
-          <div>出發日期</div>
-          <div>
-            {{
-              processDateToYyyyMmDd(inputDatetimeData.datetime.selectedDatetime)
-            }}
-            {{ porcessTimeToHhMm(inputDatetimeData.datetime.selectedDatetime) }}
-          </div>
-        </button>
-      </div>
-    </div>
-    <!-- 查詢車站相關顯示 -->
-    <div
-      class="row mt-4"
-      id="query-station-ui"
-      v-if="
-        stationList.length > 0 &&
-          (nowSelected === 'start' || nowSelected === 'end')
-      "
-    >
-      <!-- 車站搜尋框 -->
-      <div class="col-12">
-        <input
-          class="input form-control"
-          v-model="inputStationData[nowSelected].inputText"
-          :placeholder="inputStationData[nowSelected].placeholder"
-          v-on:keyup.enter="formAction.setStation(nowSelected)"
-          ref="stationInputDom"
-        />
-      </div>
-      <!-- 車站清單按鈕 -->
+      <!-- 查詢車站相關顯示 -->
       <div
-        class="col-3"
-        v-for="(station, $index) in inputStationData[nowSelected]
-          .filterStationList"
-        :key="$index"
+        class="row mt-4"
+        id="query-station-ui"
+        v-if="
+          stationList.length > 0 &&
+            (nowSelected === 'start' || nowSelected === 'end')
+        "
       >
-        <button
-          class="btn btn-gray mt-3"
-          @click="formAction.setStation(nowSelected, station)"
+        <!-- 車站搜尋框 -->
+        <div class="col-12">
+          <input
+            class="input form-control"
+            v-model="inputStationData[nowSelected].inputText"
+            :placeholder="inputStationData[nowSelected].placeholder"
+            v-on:keyup.enter="formAction.setStation(nowSelected)"
+            ref="stationInputDom"
+          />
+        </div>
+        <!-- 車站清單按鈕 -->
+        <div
+          class="col-3"
+          v-for="(station, $index) in inputStationData[nowSelected]
+            .filterStationList"
+          :key="$index"
         >
-          {{ station.name }}
+          <button
+            class="btn btn-gray mt-3"
+            @click="formAction.setStation(nowSelected, station)"
+          >
+            {{ station.name }}
+          </button>
+        </div>
+        <!-- 無符合車站 -->
+        <div
+          class="col-3 mt-3"
+          v-if="inputStationData[nowSelected].filterStationList.length <= 0"
+        >
+          無符合車站。
+        </div>
+      </div>
+      <!-- 出發日期相關顯示 -->
+      <div
+        class="row mt-4"
+        id="datetime-picker-ui"
+        v-if="nowSelected === 'datetime'"
+      >
+        <div class="col text-center">
+          <date-picker
+            mode="dateTime"
+            color="blue"
+            is-dark
+            :min-date="nowDate"
+            v-model="inputDatetimeData.datetime.selectedDatetime"
+          ></date-picker>
+        </div>
+      </div>
+      <!-- 搜尋按鈕 -->
+      <div class="text-center mt-4">
+        <button
+          type="button"
+          class="btn btn-light-blue"
+          @click="formAction.query()"
+        >
+          搜尋
         </button>
       </div>
-      <!-- 無符合車站 -->
-      <div
-        class="col-3 mt-3"
-        v-if="inputStationData[nowSelected].filterStationList.length <= 0"
-      >
-        無符合車站。
-      </div>
-    </div>
-    <!-- 出發日期相關顯示 -->
-    <div
-      class="row mt-4"
-      id="datetime-picker-ui"
-      v-if="nowSelected === 'datetime'"
-    >
-      <div class="col text-center">
-        <date-picker
-          mode="dateTime"
-          color="blue"
-          is-dark
-          :min-date="nowDate"
-          v-model="inputDatetimeData.datetime.selectedDatetime"
-        ></date-picker>
-      </div>
-    </div>
-    <!-- 搜尋按鈕 -->
-    <div class="text-center mt-4">
-      <button
-        type="button"
-        class="btn btn-light-blue"
-        @click="formAction.query()"
-      >
-        搜尋
-      </button>
-    </div>
-    <!-- 查詢歷史 -->
-    <query-history
-      v-if="router.currentRoute.value.path === '/'"
-      class="mt-4"
-      @setHistoryToSelected="formAction.setHistoryToSelected"
-    />
+      <!-- 查詢歷史 -->
+      <query-history
+        v-if="router.currentRoute.value.path === '/'"
+        class="mt-4"
+        @setHistoryToSelected="formAction.setHistoryToSelected"
+      />
+    </template>
     <div v-if="store.state.stationData">
-      <router-view />
+      <router-view v-slot="{ Component }" v-if="notReset">
+        <keep-alive include="QueryResult">
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+      <router-view v-else></router-view>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, Ref, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  PropType,
+  reactive,
+  Ref,
+  ref
+} from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { DatePicker } from "v-calendar";
 import { fakeStation } from "@/assets/fake-data/station";
 import QueryHistory from "@/components/QueryHistory.vue";
@@ -149,8 +168,16 @@ export default defineComponent({
     QueryHistory,
     ReverseTrainStationButton
   },
-  setup() {
+  props: {
+    notReset: {
+      type: Boolean as PropType<boolean>,
+      required: true
+    }
+  },
+  emits: ["set-not-reset"],
+  setup(props, { emit }) {
     const router = useRouter();
+    const route = useRoute();
 
     const store = useStore();
 
@@ -296,6 +323,8 @@ export default defineComponent({
         nowSelected.value = "";
         const checkSucess = await formAction.checkEmpty();
         if (checkSucess) {
+          emit("set-not-reset");
+
           router.push({
             name: "QueryResult",
             query: {
@@ -370,6 +399,7 @@ export default defineComponent({
 
     return {
       router,
+      route,
       store,
       stationList,
       nowSelected,

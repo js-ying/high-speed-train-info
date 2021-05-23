@@ -1,7 +1,7 @@
 <template>
   <loading v-if="store.state.loading" />
   <div class="container">
-    <router-view />
+    <router-view></router-view>
   </div>
 </template>
 

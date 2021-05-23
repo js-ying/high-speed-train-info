@@ -13,13 +13,13 @@ const routes: Array<RouteRecordRaw> = [
         path: "/search",
         name: "QueryResult",
         component: QueryResult
+      },
+      {
+        path: "/train-detail",
+        name: "TraintimeDetail",
+        component: TraintimeDetail
       }
     ]
-  },
-  {
-    path: "/train-detail",
-    name: "TraintimeDetail",
-    component: TraintimeDetail
   },
   {
     path: "/about",

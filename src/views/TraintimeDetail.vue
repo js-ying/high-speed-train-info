@@ -180,11 +180,9 @@ export default defineComponent({
         clickedTraintimeDetail.value = JSON.parse(
           route.params.clickedTraintimeDetail as string
         );
-        console.log(clickedTraintimeDetail.value);
         selectedStation.value = JSON.parse(
           localStorage.getItem("selectedStation") as string
         );
-        console.log(selectedStation.value);
       } else {
         dataLose.value = true;
       }
