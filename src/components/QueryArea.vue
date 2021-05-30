@@ -127,12 +127,11 @@
       />
     </template>
     <div v-if="store.state.stationData">
-      <router-view v-slot="{ Component }" v-if="notReset">
-        <keep-alive include="QueryResult">
+      <router-view v-slot="{ Component }">
+        <keep-alive include="QueryResult" v-if="notReset">
           <component :is="Component" />
         </keep-alive>
       </router-view>
-      <router-view v-else></router-view>
     </div>
   </div>
 </template>
@@ -171,7 +170,8 @@ export default defineComponent({
   props: {
     notReset: {
       type: Boolean as PropType<boolean>,
-      required: true
+      required: true,
+      default: false
     }
   },
   emits: ["set-not-reset"],
