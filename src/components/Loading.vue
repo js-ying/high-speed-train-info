@@ -26,7 +26,7 @@ export default defineComponent({
 <style scoped lang="scss">
 #overlay {
   position: absolute;
-  z-index: 1000;
+  z-index: 10000;
   top: 0;
   left: 0;
   height: 100%;

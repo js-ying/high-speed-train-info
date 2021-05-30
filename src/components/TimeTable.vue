@@ -1,22 +1,21 @@
 <template>
   <div id="time-table">
-    <div class="col-12 mb-3">
+    <div class="col-12 pt-3 pb-3 sticky-top">
       <div class="row">
-        <div
-          class="col-12 col-md-10 mb-2 mb-md-0 d-flex align-items-center"
-          v-if="fareList && fareList[0]"
-        >
-          <template v-for="(fare, $index) in fareList[0].Fares" :key="$index">
-            <span class="badge rounded-pill bg-gray me-2 fare"
-              >{{ fare.TicketType }} {{ fare.Price }} 元</span
-            >
-          </template>
-        </div>
-        <div
-          class="col-12 col-md-2 d-flex justify-content-end align-items-center"
-          id="data-list-length"
-        >
-          共 {{ dataList.length }} 筆
+        <div class="col-12 d-flex align-items-center justify-content-between">
+          <div v-if="fareList && fareList[0]">
+            <template v-for="(fare, $index) in fareList[0].Fares" :key="$index">
+              <span class="badge rounded-pill bg-gray me-2 fare">
+                <template v-if="windowWidth < 550">
+                  {{ fare.TicketType.slice(0, 1) }} {{ fare.Price }} 元
+                </template>
+                <template v-else>
+                  {{ fare.TicketType }} {{ fare.Price }} 元
+                </template>
+              </span>
+            </template>
+          </div>
+          <div id="data-list-length">共 {{ dataList.length }} 筆</div>
         </div>
       </div>
     </div>
@@ -34,9 +33,7 @@
             class="col-3 d-flex justify-content-center align-items-center train-table-left-side"
           >
             <div>
-              {{ data.DailyTrainInfo.TrainNo }}<br />
-              {{ data.DailyTrainInfo.StartingStationName.Zh_tw }} -
-              {{ data.DailyTrainInfo.EndingStationName.Zh_tw }}
+              {{ data.DailyTrainInfo.TrainNo }}
             </div>
           </div>
           <div class="col-6 d-flex justify-content-center align-items-center">
@@ -56,7 +53,12 @@
               </div>
             </div>
           </div>
-          <div class="col-3"></div>
+          <div
+            class="col-3 d-flex justify-content-center align-items-center train-table-right-side"
+          >
+            {{ data.DailyTrainInfo.StartingStationName.Zh_tw }}
+            - {{ data.DailyTrainInfo.EndingStationName.Zh_tw }}
+          </div>
         </div>
       </button>
     </div>
@@ -67,7 +69,15 @@
 import { OdTimeTable } from "@/types/od-time-table";
 import { OdFare } from "@/types/od-fare";
 import getTimeDiffService from "@/services/get-time-diff-service";
-import { defineComponent, PropType, reactive } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  PropType,
+  reactive,
+  ref
+} from "vue";
 import {
   GeneralTimetable,
   RailGeneralTimetable
@@ -78,6 +88,11 @@ export default defineComponent({
   name: "TimeTable",
   components: {},
   props: {
+    selectedInfo: {
+      type: String as PropType<string>,
+      required: true,
+      defualt: ""
+    },
     fareList: {
       type: Array as PropType<OdFare[]>,
       required: true,
@@ -124,7 +139,12 @@ export default defineComponent({
       });
     };
 
-    return { service, openTraintimeDetail };
+    const windowWidth = ref(window.innerWidth);
+    const onWidthChange = () => (windowWidth.value = window.innerWidth);
+    onMounted(() => window.addEventListener("resize", onWidthChange));
+    onUnmounted(() => window.removeEventListener("resize", onWidthChange));
+
+    return { service, openTraintimeDetail, windowWidth };
   }
 });
 </script>
@@ -142,9 +162,17 @@ export default defineComponent({
     }
   }
 
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: $bg-color;
+  }
+
   #data-list-length {
     color: $taupe-gray;
     font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .btn-outline-light {
@@ -158,11 +186,22 @@ export default defineComponent({
     color: $taupe-gray;
     font-size: 0.9rem;
   }
+
+  .train-table-right-side {
+    font-size: 0.9rem;
+    color: $taupe-gray;
+  }
 }
 
 @media screen and (max-width: 768px) {
-  .train-table-left-side {
-    font-size: 0.9rem;
+  #time-table {
+    .train-table-left-side {
+      font-size: 0.9rem;
+    }
+
+    .train-table-right-side {
+      font-size: 0.7rem;
+    }
   }
 }
 </style>

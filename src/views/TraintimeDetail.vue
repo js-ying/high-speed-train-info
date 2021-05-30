@@ -35,13 +35,6 @@
         <div class="row mb-4 d-flex justify-content-center">
           <div class="col-12 text-center" id="train-name">
             {{ clickedTraintimeDetail.GeneralTrainInfo.TrainNo }}
-            {{
-              clickedTraintimeDetail.GeneralTrainInfo.StartingStationName.Zh_tw
-            }}
-            -
-            {{
-              clickedTraintimeDetail.GeneralTrainInfo.EndingStationName.Zh_tw
-            }}
           </div>
           <div class="col-12 text-center" id="train-note">
             {{ getServiceDays(clickedTraintimeDetail.ServiceDay) }}
@@ -225,7 +218,7 @@ export default defineComponent({
 }
 
 .selected-station-text {
-  color: $old-rose;
+  color: $ice-berg;
   font-weight: 700;
 
   .dot-text {
@@ -236,7 +229,7 @@ export default defineComponent({
       display: block;
       height: 0.65em;
       width: 0.65em;
-      background: $old-rose;
+      background: $ice-berg;
       border-radius: 50%;
       position: absolute;
       top: 50%;

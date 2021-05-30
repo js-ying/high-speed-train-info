@@ -1,13 +1,16 @@
 <template>
-  <div class="mt-4" id="query-result">
+  <div class="mt-1" id="query-result">
     <time-table
+      :selectedInfo="
+        `${queryParams.start.selectedStation.name} - ${queryParams.end.selectedStation.name} ${queryParams.date} ${queryParams.time}`
+      "
       :fareList="fareList"
       :dataList="timeTableDataList"
       :queryDate="queryParams.date"
       :generalTimetable="generalTimetable"
       v-if="!noTrain"
     />
-    <div class="alert alert-gray" v-else>
+    <div class="alert alert-gray mt-4" v-else>
       沒有找到高鐵車次！有以下兩種可能：
       <ol class="mt-2 mb-0">
         <li>出發時間設定太晚，已無班次。</li>
