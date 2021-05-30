@@ -159,6 +159,7 @@ import processTime from "@/services/process-time";
 import { SelectedStation, Station } from "@/types/station";
 import InputStationData from "@/types/input-station-data";
 import { OdTimeTable } from "@/types/od-time-table";
+import QueryParams from "@/types/query-params";
 
 export default defineComponent({
   name: "QueryArea",
@@ -300,13 +301,20 @@ export default defineComponent({
         return true;
       },
       setLocalStorage() {
-        if (myStorage.selectedStation) {
+        if (route.name === "QueryPage" && myStorage.selectedStation) {
           inputStationData.start.selectedStation = JSON.parse(
             myStorage.selectedStation
           ).start;
           inputStationData.end.selectedStation = JSON.parse(
             myStorage.selectedStation
           ).end;
+        } else if (route.name === "QueryResult" && route.query) {
+          const query = (route.query as unknown) as QueryParams;
+          inputStationData.start.selectedStation.name = query.s;
+          inputStationData.end.selectedStation.name = query.e;
+          inputDatetimeData.datetime.selectedDatetime = new Date(
+            `${query.d} ${query.t}`
+          );
         }
       },
       setHistoryToSelected(clickedHistory: SelectedStation[]) {
