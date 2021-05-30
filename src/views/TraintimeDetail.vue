@@ -115,11 +115,12 @@
         </template>
       </div>
       <!-- 資訊遺失（refresh） -->
-      <div v-if="dataLose">
+      <div v-if="dataLose || noData">
         <div class="row">
           <div class="col-12 mb-3">
             <div class="alert alert-gray text-center">
-              請重新查詢。
+              <span v-if="dataLose">請重新查詢。</span>
+              <span v-if="noData">沒有找到此列車資訊，請聯絡網站管理員。</span>
             </div>
           </div>
         </div>
@@ -142,6 +143,7 @@ export default defineComponent({
     const clickedTraintimeDetail: Ref<GeneralTimetable | null> = ref(null);
     const selectedStation = ref("");
 
+    const noData: Ref<boolean> = ref(false);
     const dataLose: Ref<boolean> = ref(false);
 
     const goBack = () => {
@@ -176,13 +178,18 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      if (route.params.clickedTraintimeDetail) {
+      if (
+        route.params.clickedTraintimeDetail &&
+        route.params.clickedTraintimeDetail !== "undefined"
+      ) {
         clickedTraintimeDetail.value = JSON.parse(
           route.params.clickedTraintimeDetail as string
         );
         selectedStation.value = JSON.parse(
           localStorage.getItem("selectedStation") as string
         );
+      } else if (route.params.clickedTraintimeDetail === "undefined") {
+        noData.value = true;
       } else {
         dataLose.value = true;
       }
@@ -192,6 +199,7 @@ export default defineComponent({
 
     return {
       clickedTraintimeDetail,
+      noData,
       dataLose,
       goBack,
       getServiceDays,
