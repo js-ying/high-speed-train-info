@@ -105,6 +105,7 @@
             color="blue"
             is-dark
             :min-date="nowDate"
+            :max-date="maxDate"
             v-model="inputDatetimeData.datetime.selectedDatetime"
           ></date-picker>
         </div>
@@ -154,6 +155,7 @@ import QueryHistory from "@/components/QueryHistory.vue";
 // import TimeTable from "@/components/TimeTable.vue";
 import ReverseTrainStationButton from "@/components/ReverseTrainStationButton.vue";
 import getNowDate from "@/services/get-now-date";
+import getMaxDate from "@/services/get-max-date";
 import processDate from "@/services/process-date";
 import processTime from "@/services/process-time";
 import { SelectedStation, Station } from "@/types/station";
@@ -192,6 +194,7 @@ export default defineComponent({
     const stationInputDom: any = ref(null);
 
     const nowDate = ref(getNowDate());
+    const maxDate = ref(getMaxDate());
 
     const processDateToYyyyMmDd = processDate;
     const porcessTimeToHhMm = processTime;
@@ -412,6 +415,7 @@ export default defineComponent({
       stationList,
       nowSelected,
       nowDate,
+      maxDate,
       processDateToYyyyMmDd,
       porcessTimeToHhMm,
       stationInputDom,
