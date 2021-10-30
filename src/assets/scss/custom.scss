@@ -1,5 +1,9 @@
 @import 'color-variables.scss';
 
+html {
+  scroll-behavior: auto !important;
+}
+
 body {
   background-color: $dark;
   color: white;
