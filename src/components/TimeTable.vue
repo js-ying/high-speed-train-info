@@ -4,14 +4,35 @@
       <div class="row">
         <div class="col-12 d-flex align-items-center justify-content-between">
           <div v-if="fareList && fareList[0]">
-            <template v-for="(fare, $index) in fareList[0].Fares" :key="$index">
+            <!-- 全票票價 -->
+            <template v-for="(fare, $index) in adultFares" :key="$index">
               <span class="badge rounded-pill bg-gray me-2 fare">
-                <template v-if="windowWidth < 550">
-                  {{ fare.TicketType.slice(0, 1) }} {{ fare.Price }} 元
-                </template>
-                <template v-else>
+                {{ fare.TicketType }} {{ fare.Price }} 元
+              </span>
+            </template>
+
+            <!-- 其他票價 -->
+            <template v-if="isShowOtherFareList">
+              <template v-for="(fare, $index) in otherFareList" :key="$index">
+                <span class="badge rounded-pill bg-gray me-2 fare">
                   {{ fare.TicketType }} {{ fare.Price }} 元
-                </template>
+                </span>
+              </template>
+              <span
+                class="badge rounded-pill bg-light-gray me-2 fare"
+                @click="isShowOtherFareList = false"
+                id="toggle-other-fare-list-btn"
+              >
+                - 隱藏
+              </span>
+            </template>
+            <template v-else>
+              <span
+                class="badge rounded-pill bg-light-gray me-2 fare"
+                @click="isShowOtherFareList = true"
+                id="toggle-other-fare-list-btn"
+              >
+                + 其他
               </span>
             </template>
           </div>
@@ -67,7 +88,7 @@
 
 <script lang="ts">
 import { OdTimeTable } from "@/types/od-time-table";
-import { OdFare } from "@/types/od-fare";
+import { Fare, OdFare } from "@/types/od-fare";
 import getTimeDiffService from "@/services/get-time-diff-service";
 import {
   computed,
@@ -130,6 +151,29 @@ export default defineComponent({
       }
     });
 
+    const adultFares = computed(() => {
+      const fares = props.fareList[0].Fares.filter(
+        fare => fare.TicketType.substr(0, 2) === "全票"
+      );
+
+      const adjustFares = JSON.parse(JSON.stringify(fares)) as Fare[];
+
+      adjustFares.forEach(
+        fare =>
+          (fare.TicketType = fare.TicketType.slice(2, fare.TicketType.length))
+      );
+      return adjustFares;
+    });
+
+    const otherFareList = computed(() => {
+      const fares = props.fareList[0].Fares.filter(
+        fare => fare.TicketType.substr(0, 2) !== "全票"
+      );
+      return fares;
+    });
+
+    const isShowOtherFareList = ref(false);
+
     const openTraintimeDetail = (data: GeneralTimetable) => {
       router.push({
         name: "TraintimeDetail",
@@ -144,7 +188,14 @@ export default defineComponent({
     onMounted(() => window.addEventListener("resize", onWidthChange));
     onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 
-    return { service, openTraintimeDetail, windowWidth };
+    return {
+      service,
+      adultFares,
+      otherFareList,
+      isShowOtherFareList,
+      openTraintimeDetail,
+      windowWidth
+    };
   }
 });
 </script>
@@ -159,7 +210,12 @@ export default defineComponent({
   .badge {
     &.fare {
       font-size: 0.8rem;
+      margin-bottom: 0.2rem;
     }
+  }
+
+  #toggle-other-fare-list-btn {
+    cursor: pointer;
   }
 
   .sticky-top {
