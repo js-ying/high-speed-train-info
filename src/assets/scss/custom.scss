@@ -11,6 +11,16 @@ body {
   margin-top: 30px;
 }
 
+a {
+  color: $ice-berg;
+  text-decoration: none;
+
+  &:hover {
+    color: $old-rose;
+    text-decoration: underline;
+  }
+}
+
 select {
   appearance: none;
   border: 0px;
