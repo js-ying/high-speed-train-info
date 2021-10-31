@@ -43,6 +43,7 @@
     <div class="col-12 mb-3" v-for="(data, index) in dataList" :key="index">
       <button
         class="btn btn-outline-light"
+        :class="{ 'train-is-pass': isTrainPass(data) }"
         @click="
           openTraintimeDetail(
             service.getGeneralTrainInfo(data.DailyTrainInfo.TrainNo)
@@ -90,6 +91,7 @@
 import { OdTimeTable } from "@/types/od-time-table";
 import { Fare, OdFare } from "@/types/od-fare";
 import getTimeDiffService from "@/services/get-time-diff-service";
+import getNowDate from "@/services/get-now-date";
 import {
   computed,
   defineComponent,
@@ -174,6 +176,22 @@ export default defineComponent({
 
     const isShowOtherFareList = ref(false);
 
+    const isTrainPass = (data: OdTimeTable) => {
+      // 若查詢日期與當下日期相同
+      if (props.queryDate === getNowDate()) {
+        const trainDatetime = new Date(
+          `${props.queryDate} ${data.OriginStopTime.DepartureTime}`
+        );
+        const nowDatetime = new Date();
+        // 若火車時間小於當下時間則代表火車已過時
+        if (trainDatetime < nowDatetime) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
     const openTraintimeDetail = (data: GeneralTimetable) => {
       router.push({
         name: "TraintimeDetail",
@@ -193,6 +211,7 @@ export default defineComponent({
       adultFares,
       otherFareList,
       isShowOtherFareList,
+      isTrainPass,
       openTraintimeDetail,
       windowWidth
     };
@@ -205,6 +224,10 @@ export default defineComponent({
 #time-table {
   .btn {
     width: 100%;
+  }
+
+  .train-is-pass {
+    opacity: 0.5;
   }
 
   .badge {
