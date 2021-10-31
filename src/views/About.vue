@@ -47,6 +47,35 @@
         </div>
       </div>
     </div>
+    <div class="row mt-5">
+      <div class="text-center">
+        <!-- 返回按鈕 -->
+        <button
+          type="button"
+          class="btn btn-light-blue btn-sm mt-3 mb-4"
+          @click="goBack()"
+        >
+          <svg
+            width="1em"
+            height="1em"
+            viewBox="0 0 16 16"
+            class="bi bi-arrow-return-left"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.854 5.646a.5.5 0 0 1 0 .708L3.207 9l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"
+            />
+            <path
+              fill-rule="evenodd"
+              d="M13.5 2.5a.5.5 0 0 1 .5.5v4a2.5 2.5 0 0 1-2.5 2.5H3a.5.5 0 0 1 0-1h8.5A1.5 1.5 0 0 0 13 7V3a.5.5 0 0 1 .5-.5z"
+            />
+          </svg>
+          返回
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -64,8 +93,13 @@ export default defineComponent({
       router.push({ path: "/" });
     };
 
+    const goBack = () => {
+      window.history.back();
+    };
+
     return {
-      goToHome
+      goToHome,
+      goBack
     };
   }
 });
