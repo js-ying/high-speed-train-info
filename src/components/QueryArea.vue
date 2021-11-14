@@ -15,6 +15,10 @@
             <div>出發車站</div>
             <div>{{ inputStationData.start.selectedStation.name }}</div>
           </button>
+          <in-valid-message
+            v-if="!inputStationData.start.valid"
+            msg="請選擇出發車站"
+          />
           <reverse-train-station-button
             @swapSeletedStation="formAction.swapSeletedStation"
           />
@@ -31,6 +35,10 @@
             <div>抵達車站</div>
             <div>{{ inputStationData.end.selectedStation.name }}</div>
           </button>
+          <in-valid-message
+            v-if="!inputStationData.end.valid"
+            msg="請選擇抵達車站"
+          />
         </div>
         <div class="col-12 col-md-4 ps-md-4 mt-4 mt-md-0 text-center">
           <button
@@ -154,6 +162,7 @@ import { fakeStation } from "@/assets/fake-data/station";
 import QueryHistory from "@/components/QueryHistory.vue";
 // import TimeTable from "@/components/TimeTable.vue";
 import ReverseTrainStationButton from "@/components/ReverseTrainStationButton.vue";
+import InValidMessage from "@/components/InValidMessage.vue";
 import getNowDate from "@/services/get-now-date";
 import getMaxDate from "@/services/get-max-date";
 import processDate from "@/services/process-date";
@@ -168,7 +177,8 @@ export default defineComponent({
   components: {
     DatePicker,
     QueryHistory,
-    ReverseTrainStationButton
+    ReverseTrainStationButton,
+    InValidMessage
   },
   props: {
     notReset: {
