@@ -5,7 +5,7 @@
       <small><br />Ver.1</small>
     </div>
     <div class="row d-flex justify-content-center">
-      <div class="col-6">
+      <div class="col-12 col-md-6">
         <p>
           作者：JS Ying<br />
           個人網站：<a href="https://jsy.tw" target="_blanl">https://jsy.tw</a>
@@ -100,9 +100,9 @@ export default defineComponent({
 
     return {
       goToHome,
-      goBack
+      goBack,
     };
-  }
+  },
 });
 </script>
 
