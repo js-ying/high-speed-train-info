@@ -180,7 +180,9 @@ export default defineComponent({
       // 若查詢日期與當下日期相同
       if (props.queryDate === getNowDate()) {
         const trainDatetime = new Date(
-          `${props.queryDate} ${data.OriginStopTime.DepartureTime}`
+          `${props.queryDate.replace(/-/g, "/")} ${
+            data.OriginStopTime.DepartureTime
+          }`
         );
         const nowDatetime = new Date();
         // 若火車時間小於當下時間則代表火車已過時
