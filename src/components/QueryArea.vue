@@ -326,7 +326,7 @@ export default defineComponent({
           inputStationData.start.selectedStation.name = query.s;
           inputStationData.end.selectedStation.name = query.e;
           inputDatetimeData.datetime.selectedDatetime = new Date(
-            `${query.d} ${query.t}`
+            `${query.d.replace(/-/g, "/")} ${query.t}`
           );
         }
       },
