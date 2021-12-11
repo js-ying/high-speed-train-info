@@ -149,6 +149,8 @@ export default defineComponent({
         queryParams.end.selectedStation.id
       );
 
+      console.log("fareList", fareList);
+
       timeTableDataList.value = await getOdTimeTableService(
         store,
         queryParams.start.selectedStation.id,

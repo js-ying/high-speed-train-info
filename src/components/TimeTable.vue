@@ -7,7 +7,8 @@
             <!-- 全票票價 -->
             <template v-for="(fare, $index) in adultFares" :key="$index">
               <span class="badge rounded-pill bg-gray me-2 fare">
-                {{ fare.TicketType }} {{ fare.Price }} 元
+                {{ fareMap.fareClassMap[fare.FareClass] }}
+                {{ fareMap.cabinClassMap[fare.CabinClass] }} {{ fare.Price }} 元
               </span>
             </template>
 
@@ -15,7 +16,9 @@
             <template v-if="isShowOtherFareList">
               <template v-for="(fare, $index) in otherFareList" :key="$index">
                 <span class="badge rounded-pill bg-gray me-2 fare">
-                  {{ fare.TicketType }} {{ fare.Price }} 元
+                  {{ fareMap.fareClassMap[fare.FareClass] }}
+                  {{ fareMap.cabinClassMap[fare.CabinClass] }}
+                  {{ fare.Price }} 元
                 </span>
               </template>
               <span
@@ -89,7 +92,7 @@
 
 <script lang="ts">
 import { OdTimeTable } from "@/types/od-time-table";
-import { Fare, OdFare } from "@/types/od-fare";
+import { Fare, OdFare, fareMap } from "@/types/od-fare";
 import getTimeDiffService from "@/services/get-time-diff-service";
 import getNowDate from "@/services/get-now-date";
 import {
@@ -155,21 +158,22 @@ export default defineComponent({
 
     const adultFares = computed(() => {
       const fares = props.fareList[0].Fares.filter(
-        fare => fare.TicketType.substr(0, 2) === "全票"
+        fare => fare.FareClass === 1 && fare.TicketType === 1
       );
 
       const adjustFares = JSON.parse(JSON.stringify(fares)) as Fare[];
 
-      adjustFares.forEach(
-        fare =>
-          (fare.TicketType = fare.TicketType.slice(2, fare.TicketType.length))
-      );
+      // adjustFares.forEach(
+      //   fare =>
+      //     (fare.TicketType = fare.TicketType.slice(2, fare.TicketType.length))
+      // );
+
       return adjustFares;
     });
 
     const otherFareList = computed(() => {
       const fares = props.fareList[0].Fares.filter(
-        fare => fare.TicketType.substr(0, 2) !== "全票"
+        fare => fare.FareClass !== 1 && fare.TicketType === 1
       );
       return fares;
     });
@@ -215,7 +219,8 @@ export default defineComponent({
       isShowOtherFareList,
       isTrainPass,
       openTraintimeDetail,
-      windowWidth
+      windowWidth,
+      fareMap
     };
   }
 });
