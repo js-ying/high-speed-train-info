@@ -5,11 +5,11 @@
       width="16"
       height="16"
       fill="currentColor"
-      class="bi bi-house-door-fill"
+      class="bi bi-info"
       viewBox="0 0 16 16"
     >
       <path
-        d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"
+        d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
       />
     </svg>
   </div>
@@ -37,21 +37,17 @@ export default defineComponent({
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 #about-btn {
-  position: fixed;
-  z-index: 10;
-  right: 20px;
-  bottom: 20px;
-  font-size: 2em;
-  cursor: pointer;
-  background-color: $davys-grey;
-  border-radius: 50%;
-  height: 32px;
-  width: 32px;
-
   svg {
-    left: 8px;
-    position: absolute;
-    top: 7px;
+    position: fixed;
+    z-index: 10;
+    right: 20px;
+    bottom: 20px;
+    font-size: 2em;
+    cursor: pointer;
+    background-color: $davys-grey;
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
   }
 }
 </style>

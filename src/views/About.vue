@@ -8,8 +8,16 @@
       <div class="col-12 col-md-6">
         <p>
           作者：JS Ying<br />
-          個人網站：<a href="https://jsy.tw" target="_blanl">https://jsy.tw</a>
+          個人網站：<a href="https://jsy.tw" target="_blanl">https://jsy.tw</a
+          ><br />
+          台鐵時刻查詢：<a href="https://traintime.jsy.tw" target="_blank"
+            >https://traintime.jsy.tw</a
+          >
         </p>
+
+        <div class="alert alert-gray">
+          本站所提供之資訊僅供參考，請依照現場鐵路狀況或高鐵官方單位所公佈之資訊為準。
+        </div>
 
         <p class="mt-4">
           <u>Ver.1 版本特色 (2021-11)</u><br />
@@ -33,11 +41,31 @@
         </p>
 
         <div class="footer">
-          <div id="time">
+          <div id="data-source">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
+              fill="currentColor"
+              class="bi bi-link-45deg"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"
+              />
+              <path
+                d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"
+              />
+            </svg>
+            資料來源：<a href="https://tdx.transportdata.tw/" target="_blank"
+              >TDX 運輸資料流通服務</a
+            >
+          </div>
+          <div id="time">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
               fill="currentColor"
               class="bi bi-info-circle-fill"
               viewBox="0 0 16 16"
