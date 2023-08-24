@@ -4,7 +4,7 @@
       本站所提供之資訊僅供參考，請依照現場鐵路狀況或高鐵官方單位所公佈之資訊為準。
     </div>
 
-    <div class="text-center text-small-gray mb-4" v-else>
+    <div class="text-center text-small-gray mt-4 mb-4" v-else>
       本站所提供之資訊僅供參考，請依照現場鐵路狀況或高鐵官方單位所公佈之資訊為準。
     </div>
   </div>

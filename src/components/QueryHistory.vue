@@ -1,7 +1,7 @@
 <template>
   <div class="row text-center" id="query-history">
     <template v-if="queryHistoryList.length > 0">
-      <div class="col-12 mb-2" id="history-text">
+      <div class="col-12 mt-4 mb-2" id="history-text">
         歷史查詢：共 {{ queryHistoryList.length }} / 6 筆
       </div>
       <div
