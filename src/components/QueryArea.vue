@@ -131,7 +131,7 @@
       <!-- 查詢歷史 -->
       <query-history
         v-if="router.currentRoute.value.path === '/'"
-        class="mt-4"
+        class="mt-4 mb-4"
         @setHistoryToSelected="formAction.setHistoryToSelected"
       />
     </template>
