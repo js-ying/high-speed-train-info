@@ -8,11 +8,14 @@
     >
       高鐵時刻查詢
     </div>
+
     <query-area
       ref="queryArea"
       :notReset="notReset"
       @set-not-reset="setNotReset"
     ></query-area>
+
+    <disclaimer type="text" />
   </div>
 </template>
 
@@ -20,11 +23,13 @@
 import { defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import QueryArea from "@/components/QueryArea.vue";
+import Disclaimer from "@/components/Disclaimer.vue";
 
 export default defineComponent({
   name: "QueryPage",
   components: {
-    QueryArea
+    QueryArea,
+    Disclaimer
   },
   setup() {
     const router = useRouter();

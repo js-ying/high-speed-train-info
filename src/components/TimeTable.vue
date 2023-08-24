@@ -1,9 +1,9 @@
 <template>
   <div id="time-table">
-    <div class="col-12 pt-3 pb-3 sticky-top">
+    <div class="col-12 pt-3 pb-3 sticky-top" v-if="fareList && fareList[0]">
       <div class="row">
         <div class="col-12 d-flex align-items-center justify-content-between">
-          <div v-if="fareList && fareList[0]">
+          <div>
             <!-- 全票票價 -->
             <template v-for="(fare, $index) in adultFares" :key="$index">
               <span class="badge rounded-pill bg-gray me-2 fare">
@@ -54,11 +54,16 @@
         "
       >
         <div class="row py-1">
-          <div
-            class="col-3 d-flex justify-content-center align-items-center train-table-left-side"
-          >
+          <div class="col-3 d-flex justify-content-center align-items-center">
             <div>
-              {{ data.DailyTrainInfo.TrainNo }}
+              <div class="train-no">
+                {{ data.DailyTrainInfo.TrainNo }}
+              </div>
+              <div class="text-small">
+                {{ data.DailyTrainInfo.StartingStationName.Zh_tw }}-{{
+                  data.DailyTrainInfo.EndingStationName.Zh_tw
+                }}
+              </div>
             </div>
           </div>
           <div class="col-6 d-flex justify-content-center align-items-center">
@@ -78,23 +83,59 @@
               </div>
             </div>
           </div>
-          <div
-            class="col-3 d-flex justify-content-center align-items-center train-table-right-side"
-          >
-            {{ data.DailyTrainInfo.StartingStationName.Zh_tw }}
-            - {{ data.DailyTrainInfo.EndingStationName.Zh_tw }}
+          <div class="col-3 d-flex flex-column text-small">
+            <div>
+              自由座
+            </div>
+            <div
+              class="d-flex justify-content-center mt-1"
+              :style="{ gap: '5px' }"
+              v-if="
+                getFreeSeatingCarByTrainNo(
+                  freeSeatingCarList,
+                  data.DailyTrainInfo.TrainNo
+                ).startCar
+              "
+            >
+              <span class="free-seat-no">
+                {{
+                  getFreeSeatingCarByTrainNo(
+                    freeSeatingCarList,
+                    data.DailyTrainInfo.TrainNo
+                  ).startCar
+                }}</span
+              >-<span class="free-seat-no">
+                {{
+                  getFreeSeatingCarByTrainNo(
+                    freeSeatingCarList,
+                    data.DailyTrainInfo.TrainNo
+                  ).endCar
+                }}
+              </span>
+            </div>
+            <div class="text-small-gray" v-else>
+              請於現場確認
+            </div>
           </div>
         </div>
       </button>
+
+      <!-- 服務日 -->
+      <div class="row">
+        <div class="text-small-gray pt-1 pl-2">
+          {{
+            getServiceDays(
+              service.getGeneralTrainInfo(data.DailyTrainInfo.TrainNo)
+                ?.ServiceDay
+            )
+          }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { OdTimeTable } from "@/types/od-time-table";
-import { Fare, OdFare, fareMap } from "@/types/od-fare";
-import getTimeDiffService from "@/services/get-time-diff-service";
-import getNowDate from "@/services/get-now-date";
 import {
   computed,
   defineComponent,
@@ -104,11 +145,18 @@ import {
   reactive,
   ref
 } from "vue";
+import { useRouter } from "vue-router";
+import { OdTimeTable } from "@/types/od-time-table";
+import getTimeDiffService from "@/services/get-time-diff-service";
+import getNowDate from "@/utils/get-now-date";
+import { getServiceDays } from "@/utils/get-service-days";
+import { getFreeSeatingCarByTrainNo } from "@/utils/get-free-seating-car-by-train-no";
+import { Fare, OdFare, fareMap } from "@/types/od-fare";
+import { FreeSeatingCar } from "@/types/daily-free-seating-car";
 import {
   GeneralTimetable,
   RailGeneralTimetable
 } from "@/types/rail-general-timetable";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TimeTable",
@@ -121,6 +169,11 @@ export default defineComponent({
     },
     fareList: {
       type: Array as PropType<OdFare[]>,
+      required: true,
+      defualt: () => []
+    },
+    freeSeatingCarList: {
+      type: Array as PropType<FreeSeatingCar[]>,
       required: true,
       defualt: () => []
     },
@@ -145,7 +198,11 @@ export default defineComponent({
 
     const service = reactive({
       getTimeDiffService: getTimeDiffService,
-      getGeneralTrainInfo: (trainNo: string) => {
+      getGeneralTrainInfo: (
+        trainNo?: string
+      ): GeneralTimetable | null | undefined => {
+        if (!trainNo) return null;
+
         if (props.generalTimetable.length > 0) {
           return props.generalTimetable.find((gtt: RailGeneralTimetable) => {
             return gtt.GeneralTimetable.GeneralTrainInfo.TrainNo === trainNo;
@@ -162,11 +219,6 @@ export default defineComponent({
       );
 
       const adjustFares = JSON.parse(JSON.stringify(fares)) as Fare[];
-
-      // adjustFares.forEach(
-      //   fare =>
-      //     (fare.TicketType = fare.TicketType.slice(2, fare.TicketType.length))
-      // );
 
       return adjustFares;
     });
@@ -198,7 +250,9 @@ export default defineComponent({
       return false;
     };
 
-    const openTraintimeDetail = (data: GeneralTimetable) => {
+    const openTraintimeDetail = (data?: GeneralTimetable | null) => {
+      if (!data) return;
+
       router.push({
         name: "TraintimeDetail",
         params: {
@@ -213,14 +267,16 @@ export default defineComponent({
     onUnmounted(() => window.removeEventListener("resize", onWidthChange));
 
     return {
+      windowWidth,
       service,
+      fareMap,
       adultFares,
       otherFareList,
       isShowOtherFareList,
       isTrainPass,
       openTraintimeDetail,
-      windowWidth,
-      fareMap
+      getServiceDays,
+      getFreeSeatingCarByTrainNo
     };
   }
 });
@@ -273,20 +329,21 @@ export default defineComponent({
     font-size: 0.9rem;
   }
 
-  .train-table-right-side {
-    font-size: 0.9rem;
-    color: $taupe-gray;
+  .free-seat-no {
+    color: $erie-black;
+    font-size: 0.8rem;
+    background-color: $orange;
+    height: 20px;
+    line-height: 20px;
+    width: 25px;
+    border-radius: 5px;
   }
 }
 
 @media screen and (max-width: 768px) {
   #time-table {
-    .train-table-left-side {
+    .train-no {
       font-size: 0.9rem;
-    }
-
-    .train-table-right-side {
-      font-size: 0.7rem;
     }
   }
 }

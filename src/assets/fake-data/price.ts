@@ -8,9 +8,9 @@ export const price = {
       DestinationStationName: { Zh_tw: "左營", En: "Zuoying" },
       Direction: 0,
       Fares: [
-        { TicketType: "商務", Price: 2500 },
-        { TicketType: "標準", Price: 1530 },
-        { TicketType: "自由", Price: 1480 }
+        { TicketType: 1, Price: 2500, FareClass: 1, CabinClass: 2 },
+        { TicketType: 1, Price: 1530, FareClass: 1, CabinClass: 1 },
+        { TicketType: 1, Price: 1480, FareClass: 1, CabinClass: 3 }
       ],
       SrcUpdateTime: "2020-07-23T09:13:41+08:00",
       UpdateTime: "2020-07-24T06:49:13+08:00",

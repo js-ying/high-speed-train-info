@@ -79,3 +79,26 @@ select {
     color: white;
   }
 }
+
+.text-dark {
+  color: $erie-black;
+}
+
+.text-small {
+  font-size: 0.9rem;
+}
+
+.text-small-gray {
+  font-size: 0.9rem;
+  color: $taupe-gray;
+}
+
+@media screen and (max-width: 768px) {
+  .text-small {
+    font-size: 0.8rem;
+  }
+
+  .text-small-gray {
+    font-size: 0.8rem;
+  }
+}

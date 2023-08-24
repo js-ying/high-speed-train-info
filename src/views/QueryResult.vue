@@ -5,6 +5,7 @@
         `${queryParams.start.selectedStation.name} - ${queryParams.end.selectedStation.name} ${queryParams.date} ${queryParams.time}`
       "
       :fareList="fareList"
+      :freeSeatingCarList="freeSeatingCarList"
       :dataList="timeTableDataList"
       :queryDate="queryParams.date"
       :generalTimetable="generalTimetable"
@@ -27,11 +28,13 @@ import { useStore } from "vuex";
 import { SelectedStation } from "@/types/station";
 import { OdTimeTable } from "@/types/od-time-table";
 import { OdFare } from "@/types/od-fare";
+import { FreeSeatingCar } from "@/types/daily-free-seating-car";
 import { RailGeneralTimetable } from "@/types/rail-general-timetable";
 import QueryParams from "@/types/query-params";
 import getOdTimeTableService from "@/services/get-od-time-table-service";
 import getStationIdService from "@/services/get-station-id-service";
 import getOdFareService from "@/services/get-od-fare-service";
+import getDailyFreeSeatingCarService from "@/services/get-daily-free-seating-car-service";
 import TimeTable from "@/components/TimeTable.vue";
 import getGeneralTimetableService from "@/services/get-general-timetable-service";
 
@@ -45,6 +48,7 @@ export default defineComponent({
 
     const noTrain = ref(false);
     const fareList: Ref<OdFare[]> = ref([]);
+    const freeSeatingCarList: Ref<FreeSeatingCar[]> = ref([]);
     const timeTableDataList: Ref<OdTimeTable[]> = ref([]);
     const generalTimetable: Ref<RailGeneralTimetable[]> = ref([]);
 
@@ -142,24 +146,47 @@ export default defineComponent({
     const query = async () => {
       timeTableDataList.value = [];
       noTrain.value = false;
+      try {
+        timeTableDataList.value = await getOdTimeTableService(
+          store,
+          queryParams.start.selectedStation.id,
+          queryParams.end.selectedStation.id,
+          queryParams.date,
+          queryParams.time
+        );
 
-      fareList.value = await getOdFareService(
-        store,
-        queryParams.start.selectedStation.id,
-        queryParams.end.selectedStation.id
-      );
+        noTrain.value = timeTableDataList.value.length <= 0 ? true : false;
 
-      timeTableDataList.value = await getOdTimeTableService(
-        store,
-        queryParams.start.selectedStation.id,
-        queryParams.end.selectedStation.id,
-        queryParams.date,
-        queryParams.time
-      );
+        generalTimetable.value = await getGeneralTimetable();
 
-      generalTimetable.value = await getGeneralTimetable();
+        fareList.value = await getOdFareService(
+          store,
+          queryParams.start.selectedStation.id,
+          queryParams.end.selectedStation.id
+        );
 
-      noTrain.value = timeTableDataList.value.length <= 0 ? true : false;
+        freeSeatingCarList.value = (
+          await getDailyFreeSeatingCarService(store, queryParams.date)
+        ).FreeSeatingCars;
+      } catch (error) {
+        store.commit("hideLoading");
+
+        if (error.response) {
+          if (error.response.status === 429) {
+            alert("系統已達每日流量上限，請隔日再來⋯⋯");
+          } else {
+            alert(
+              `${error.response.status}: ${error.response.data.message}，請聯繫系統管理員。`
+            );
+          }
+        } else if (error.request) {
+          alert(`API 無回應，請聯繫系統管理員。`);
+          console.log(error.request);
+        } else {
+          alert(`未知錯誤，請聯繫系統管理員。`);
+          console.log("Error", error.message);
+        }
+      }
 
       localStorageAction.saveLocalStorage();
       localStorageAction.saveHistoryLocalStorage();
@@ -181,6 +208,7 @@ export default defineComponent({
     return {
       noTrain,
       fareList,
+      freeSeatingCarList,
       timeTableDataList,
       generalTimetable,
       queryParams

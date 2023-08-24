@@ -19,5 +19,5 @@ export default async function getOdFare(
   store.commit("hideLoading");
 
   return response.data;
-  // return price.data;
+  // return price.data as any;
 }
