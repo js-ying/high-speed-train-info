@@ -1,6 +1,6 @@
 <template>
   <div id="disclaimer">
-    <div class="alert alert-gray mt-4" v-if="type === 'alert'">
+    <div class="alert alert-gray mt-4 mb-2" v-if="type === 'alert'">
       本站所提供之資訊僅供參考，請依照現場鐵路狀況或高鐵官方單位所公佈之資訊為準。
     </div>
 

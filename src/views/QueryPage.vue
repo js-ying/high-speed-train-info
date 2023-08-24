@@ -15,7 +15,7 @@
       @set-not-reset="setNotReset"
     ></query-area>
 
-    <disclaimer type="text" />
+    <disclaimer type="text" v-if="route.name === 'QueryPage'" />
   </div>
 </template>
 
