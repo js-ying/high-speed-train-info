@@ -84,38 +84,10 @@
             </div>
           </div>
           <div class="col-3 d-flex flex-column text-small">
-            <div>
-              自由座
-            </div>
-            <div
-              class="d-flex justify-content-center mt-1"
-              :style="{ gap: '5px' }"
-              v-if="
-                getFreeSeatingCarByTrainNo(
-                  freeSeatingCarList,
-                  data.DailyTrainInfo.TrainNo
-                ).startCar
-              "
-            >
-              <span class="free-seat-no">
-                {{
-                  getFreeSeatingCarByTrainNo(
-                    freeSeatingCarList,
-                    data.DailyTrainInfo.TrainNo
-                  ).startCar
-                }}</span
-              >-<span class="free-seat-no">
-                {{
-                  getFreeSeatingCarByTrainNo(
-                    freeSeatingCarList,
-                    data.DailyTrainInfo.TrainNo
-                  ).endCar
-                }}
-              </span>
-            </div>
-            <div class="text-small-gray" v-else>
-              請於現場確認
-            </div>
+            <free-seating-cars
+              :freeSeatingCarList="freeSeatingCarList"
+              :trainNo="data.DailyTrainInfo.TrainNo"
+            />
           </div>
         </div>
       </button>
@@ -146,11 +118,11 @@ import {
   ref
 } from "vue";
 import { useRouter } from "vue-router";
-import { OdTimeTable } from "@/types/od-time-table";
+import FreeSeatingCars from "@/components/FreeSeatingCars.vue";
 import getTimeDiffService from "@/services/get-time-diff-service";
 import getNowDate from "@/utils/get-now-date";
 import { getServiceDays } from "@/utils/get-service-days";
-import { getFreeSeatingCarByTrainNo } from "@/utils/get-free-seating-car-by-train-no";
+import { OdTimeTable } from "@/types/od-time-table";
 import { Fare, OdFare, fareMap } from "@/types/od-fare";
 import { FreeSeatingCar } from "@/types/daily-free-seating-car";
 import {
@@ -160,7 +132,7 @@ import {
 
 export default defineComponent({
   name: "TimeTable",
-  components: {},
+  components: { FreeSeatingCars },
   props: {
     selectedInfo: {
       type: String as PropType<string>,
@@ -275,8 +247,7 @@ export default defineComponent({
       isShowOtherFareList,
       isTrainPass,
       openTraintimeDetail,
-      getServiceDays,
-      getFreeSeatingCarByTrainNo
+      getServiceDays
     };
   }
 });
@@ -327,16 +298,6 @@ export default defineComponent({
   .time-diff {
     color: $taupe-gray;
     font-size: 0.9rem;
-  }
-
-  .free-seat-no {
-    color: $erie-black;
-    font-size: 0.8rem;
-    background-color: $orange;
-    height: 20px;
-    line-height: 20px;
-    width: 25px;
-    border-radius: 5px;
   }
 }
 

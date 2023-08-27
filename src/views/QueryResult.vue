@@ -176,7 +176,7 @@ export default defineComponent({
             alert("系統已達每日流量上限，請隔日再來⋯⋯");
           } else {
             alert(
-              `${error.response.status}: ${error.response.data.message}，請聯繫系統管理員。`
+              `${error.response.status}: ${error.response.data.Message}，請聯繫系統管理員。`
             );
           }
         } else if (error.request) {
