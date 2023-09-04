@@ -173,7 +173,11 @@ export default defineComponent({
 
         if (error.response) {
           if (error.response.status === 429) {
-            alert("系統已達每日流量上限，請隔日再來⋯⋯");
+            if (error.config?.url.includes("DailyFreeSeatingCar")) {
+              // 自由座 API 出錯不影響時刻表
+            } else {
+              alert("系統已達每日流量上限，請隔日再來⋯⋯");
+            }
           } else {
             alert(
               `${error.response.status}: ${error.response.data.Message}，請聯繫系統管理員。`
