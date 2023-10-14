@@ -5,10 +5,9 @@
       <small><br />Ver.2</small>
     </div>
     <div class="row d-flex justify-content-center">
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-8">
         <p>
-          作者：JS Ying<br />
-          信箱：jsying1994@gmail.com<br />
+          作者：JS Ying (jsying1994@gmail.com)<br />
           <img
             src="https://jsy.tw/logo.png"
             width="15"
@@ -26,13 +25,13 @@
 
         <disclaimer />
 
-        <p class="mt-4" id="pwa-tip">
+        <div class="alert alert-light-blue mt-4" id="pwa-tip">
           手機使用者可以把這個網頁變成 APP 放在桌面上。<a
             href="https://jsy.tw/blog/1370/"
             target="_blank"
             >查看更多</a
           >
-        </p>
+        </div>
 
         <p class="mt-4">
           <u>Ver.2 版本特色 (2023-08)</u><br />
@@ -158,7 +157,6 @@ small {
 }
 
 #pwa-tip {
-  color: $taupe-gray;
 }
 
 .footer {

@@ -4,6 +4,9 @@
     <router-view></router-view>
   </div>
   <about-btn />
+  <!-- 預載入圖片 -->
+  <img src="https://jsy.tw/logo.png" style="display: none;" />
+  <img src="https://traintime.jsy.tw/logo.png" style="display: none;" />
 </template>
 
 <script lang="ts">
