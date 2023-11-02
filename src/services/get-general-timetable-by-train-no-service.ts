@@ -10,7 +10,7 @@ export default async function getGeneralTimetableByTrainNoService(
   store.commit("showLoading");
 
   const response: RailGeneralTimetable[] = await axios.get(
-    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/GeneralTimetable/TrainNo/${trainNo}?$format=JSON`,
+    `https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/GeneralTimetable/TrainNo/${trainNo}?$format=JSON`,
     { headers: getAuthorizationHeaderService() }
   );
 

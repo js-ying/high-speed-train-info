@@ -396,7 +396,7 @@ export default defineComponent({
     async function getStationList() {
       try {
         // const response = await axios.get(
-        //   "https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station",
+        //   "https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/Station",
         //   {
         //     params: {
         //       format: JSON

@@ -14,7 +14,7 @@ export default async function getOdTimeTableService(
   store.commit("showLoading");
 
   const response = await axios.get(
-    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/OD/${startStation}/to/${endStation}/${date}?&$orderby=OriginStopTime/DepartureTime&$filter=OriginStopTime/DepartureTime ge '${time}'&$format=JSON`,
+    `https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/DailyTimetable/OD/${startStation}/to/${endStation}/${date}?&$orderby=OriginStopTime/DepartureTime&$filter=OriginStopTime/DepartureTime ge '${time}'&$format=JSON`,
     { headers: getAuthorizationHeaderService() }
   );
 

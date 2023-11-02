@@ -12,7 +12,7 @@ export default async function getOdFare(
   store.commit("showLoading");
 
   const response = await axios.get(
-    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/ODFare?$filter=OriginStationID%20eq%20'${startStaionId}'%20and%20DestinationStationID%20eq%20'${endStationId}'&$format=JSON`,
+    `https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/ODFare?$filter=OriginStationID%20eq%20'${startStaionId}'%20and%20DestinationStationID%20eq%20'${endStationId}'&$format=JSON`,
     { headers: getAuthorizationHeaderService() }
   );
 

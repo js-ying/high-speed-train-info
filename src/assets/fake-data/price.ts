@@ -25,7 +25,7 @@ export const price = {
   },
   config: {
     url:
-      "https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/ODFare?$filter=OriginStationID%20eq%20'0990'%20and%20DestinationStationID%20eq%20'1070'&$format=JSON",
+      "https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/ODFare?$filter=OriginStationID%20eq%20'0990'%20and%20DestinationStationID%20eq%20'1070'&$format=JSON",
     method: "get",
     headers: { Accept: "application/json, text/plain, */*" },
     transformRequest: [null],

@@ -9,7 +9,7 @@ export default async function getGeneralTimetableService(
   store.commit("showLoading");
 
   const response = await axios.get(
-    `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/GeneralTimetable?$format=JSON`,
+    `https://tdx.transportdata.tw/api/basic/v2/Rail/THSR/GeneralTimetable?$format=JSON`,
     { headers: getAuthorizationHeaderService() }
   );
 
