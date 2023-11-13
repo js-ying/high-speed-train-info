@@ -1,6 +1,6 @@
 <template>
   <div id="time-table">
-    <div class="col-12 pt-3 pb-3 sticky-top" v-if="fareList && fareList[0]">
+    <div class="col-12 pt-3 sticky-top" v-if="fareList && fareList[0]">
       <div class="row">
         <div class="col-12 d-flex align-items-center justify-content-between">
           <div>
@@ -43,7 +43,7 @@
         </div>
       </div>
     </div>
-    <div class="col-12 mb-3" v-for="(data, index) in dataList" :key="index">
+    <div class="col-12 my-3" v-for="(data, index) in dataList" :key="index">
       <button
         class="btn btn-outline-light"
         :class="{ 'train-is-pass': isTrainPass(data) }"
