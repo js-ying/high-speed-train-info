@@ -22,21 +22,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, Ref, ref } from "vue";
-import { useRoute, onBeforeRouteUpdate } from "vue-router";
-import { useStore } from "vuex";
-import { SelectedStation } from "@/types/station";
-import { OdTimeTable } from "@/types/od-time-table";
-import { OdFare } from "@/types/od-fare";
-import { FreeSeatingCar } from "@/types/daily-free-seating-car";
-import { RailGeneralTimetable } from "@/types/rail-general-timetable";
-import QueryParams from "@/types/query-params";
-import getOdTimeTableService from "@/services/get-od-time-table-service";
-import getStationIdService from "@/services/get-station-id-service";
-import getOdFareService from "@/services/get-od-fare-service";
-import getDailyFreeSeatingCarService from "@/services/get-daily-free-seating-car-service";
 import TimeTable from "@/components/TimeTable.vue";
-import getGeneralTimetableService from "@/services/get-general-timetable-service";
+import getJsyHsTrainTimeTableService from "@/services/get-jsy-hs-train-time-table-service";
+import getStationIdService from "@/services/get-station-id-service";
+import { FreeSeatingCar } from "@/types/daily-free-seating-car";
+import { JsyHsTrainTimeTable } from "@/types/jsy-hs-train-time-table";
+import { OdFare } from "@/types/od-fare";
+import { OdTimeTable } from "@/types/od-time-table";
+import QueryParams from "@/types/query-params";
+import { RailGeneralTimetable } from "@/types/rail-general-timetable";
+import { SelectedStation } from "@/types/station";
+import { defineComponent, onMounted, reactive, Ref, ref } from "vue";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "QueryResult",
@@ -128,26 +126,11 @@ export default defineComponent({
       queryParams.time = data.t;
     };
 
-    const getGeneralTimetable = async () => {
-      if (
-        !sessionStorage.getItem("gernalTimetable") ||
-        sessionStorage.getItem("gernalTimetable") === "{}"
-      ) {
-        const gernalTimetable = await getGeneralTimetableService(store);
-        sessionStorage.setItem(
-          "gernalTimetable",
-          JSON.stringify(gernalTimetable)
-        );
-      }
-
-      return JSON.parse(sessionStorage.getItem("gernalTimetable") || "");
-    };
-
     const query = async () => {
       timeTableDataList.value = [];
       noTrain.value = false;
       try {
-        timeTableDataList.value = await getOdTimeTableService(
+        const jsyHsTrainTimeTableResult: JsyHsTrainTimeTable = await getJsyHsTrainTimeTableService(
           store,
           queryParams.start.selectedStation.id,
           queryParams.end.selectedStation.id,
@@ -155,19 +138,16 @@ export default defineComponent({
           queryParams.time
         );
 
+        timeTableDataList.value = jsyHsTrainTimeTableResult.timeTable;
+
         noTrain.value = timeTableDataList.value.length <= 0 ? true : false;
 
-        generalTimetable.value = await getGeneralTimetable();
+        generalTimetable.value = jsyHsTrainTimeTableResult.generalTimeTable;
 
-        fareList.value = await getOdFareService(
-          store,
-          queryParams.start.selectedStation.id,
-          queryParams.end.selectedStation.id
-        );
+        fareList.value = jsyHsTrainTimeTableResult.fareList;
 
-        freeSeatingCarList.value = (
-          await getDailyFreeSeatingCarService(store, queryParams.date)
-        ).FreeSeatingCars;
+        freeSeatingCarList.value =
+          jsyHsTrainTimeTableResult.dailyFreeSeatingCar.FreeSeatingCars;
       } catch (error) {
         store.commit("hideLoading");
 
