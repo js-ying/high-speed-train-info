@@ -2,7 +2,7 @@
   <div class="about">
     <div class="text-center mb-4" id="web-title" @click="goToHome">
       高鐵時刻查詢
-      <small><br />Ver.2</small>
+      <small class="d-block">Ver.3</small>
     </div>
     <div class="row d-flex justify-content-center">
       <div class="col-12 col-md-8">
@@ -32,6 +32,13 @@
             >查看更多</a
           >
         </div>
+
+        <p class="mt-4">
+          <u>Ver.3 版本特色 (2024-01)</u><br />
+          1. 增設後台程式進行資料介接與處理，提高系統穩定度與彈性，並避免原先的流量上限問題<br />
+          2. 因應高鐵資料即將收費的政策，本站以新增廣告區域的作法來減少部份負擔，還請見諒<br />
+          （您的順手點擊廣告，可給予網站作者一臂之力，繼續提供優質的使用體驗給大家）
+        </p>
 
         <p class="mt-4">
           <u>Ver.2 版本特色 (2023-08)</u><br />
@@ -87,7 +94,7 @@
                 d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"
               />
             </svg>
-            發行日：2021-11-14，最後更新：2023-08
+            發行日：2021-11-14，最後更新：2024-01
           </div>
         </div>
       </div>
@@ -125,9 +132,9 @@
 </template>
 
 <script lang="ts">
+import Disclaimer from "@/components/Disclaimer.vue";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import Disclaimer from "@/components/Disclaimer.vue";
 
 export default defineComponent({
   name: "About",

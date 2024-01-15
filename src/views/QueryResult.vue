@@ -11,17 +11,22 @@
       :generalTimetable="generalTimetable"
       v-if="!noTrain"
     />
-    <div class="alert alert-gray mt-4" v-else>
-      沒有找到高鐵車次！有以下兩種可能：
-      <ol class="mt-2 mb-0">
-        <li>出發時間設定太晚，已無班次。</li>
-        <li>起迄車站設定錯誤。</li>
-      </ol>
+    <div class="mb-4" v-else>
+      <div class="alert alert-gray mt-4">
+        沒有找到高鐵車次！有以下兩種可能：
+        <ol class="mt-2 mb-0">
+          <li>出發時間設定太晚，已無班次。</li>
+          <li>起迄車站設定錯誤。</li>
+        </ol>
+      </div>
+      <!-- traintime-ads -->
+      <AdBanner />
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import AdBanner from "@/components/AdBanner.vue";
 import TimeTable from "@/components/TimeTable.vue";
 import getJsyHsTrainTimeTableService from "@/services/get-jsy-hs-train-time-table-service";
 import getStationIdService from "@/services/get-station-id-service";
@@ -38,7 +43,7 @@ import { useStore } from "vuex";
 
 export default defineComponent({
   name: "QueryResult",
-  components: { TimeTable },
+  components: { TimeTable, AdBanner },
   setup() {
     const route = useRoute();
     const store = useStore();
@@ -152,17 +157,9 @@ export default defineComponent({
         store.commit("hideLoading");
 
         if (error.response) {
-          if (error.response.status === 429) {
-            if (error.config?.url.includes("DailyFreeSeatingCar")) {
-              // 自由座 API 出錯不影響時刻表
-            } else {
-              alert("系統已達每日流量上限，請隔日再來⋯⋯");
-            }
-          } else {
-            alert(
-              `${error.response.status}: ${error.response.data.Message}，請聯繫系統管理員。`
-            );
-          }
+          alert(
+            `${error.response.data.message}`
+          );
         } else if (error.request) {
           alert(`API 無回應，請聯繫系統管理員。`);
           console.log(error.request);

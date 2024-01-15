@@ -1,31 +1,58 @@
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="description" content="簡單又快速。">
-    <title>高鐵時刻查詢</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7992139989807299"
+      crossorigin="anonymous"
+    ></script>
+    <meta
+      name="description"
+      content="高鐵時刻查詢，簡單又快速。自由座車箱和歷史快查功能，讓每日通勤不再煩惱。"
+    />
+    <title>高鐵時刻查詢 | 專為通勤族設計的網站</title>
     <link rel="apple-touch-icon" href="<%= BASE_URL %>logo.png" />
-    <link rel="icon" href="<%= BASE_URL %>logo.png">
+    <link rel="icon" href="<%= BASE_URL %>logo.png" />
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X9FD3GXM4B"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-X9FD3GXM4B"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'G-X9FD3GXM4B');
+      gtag("config", "G-X9FD3GXM4B");
+
+      window["addAds"] = function() {
+        let childList = document.getElementsByClassName("g-a-d-s");
+        for (let i = 0; i < childList.length; i++) {
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        }
+      };
     </script>
   </body>
 </html>

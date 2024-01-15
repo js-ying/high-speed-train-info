@@ -21,20 +21,14 @@
                   {{ fare.Price }} 元
                 </span>
               </template>
-              <span
-                class="badge rounded-pill bg-light-gray me-2 fare"
-                @click="isShowOtherFareList = false"
-                id="toggle-other-fare-list-btn"
-              >
+              <span class="badge rounded-pill bg-light-gray me-2 fare" @click="isShowOtherFareList = false"
+                id="toggle-other-fare-list-btn">
                 - 隱藏
               </span>
             </template>
             <template v-else>
-              <span
-                class="badge rounded-pill bg-light-gray me-2 fare"
-                @click="isShowOtherFareList = true"
-                id="toggle-other-fare-list-btn"
-              >
+              <span class="badge rounded-pill bg-light-gray me-2 fare" @click="isShowOtherFareList = true"
+                id="toggle-other-fare-list-btn">
                 + 其他
               </span>
             </template>
@@ -44,15 +38,11 @@
       </div>
     </div>
     <div class="col-12 my-3" v-for="(data, index) in dataList" :key="index">
-      <button
-        class="btn btn-outline-light"
-        :class="{ 'train-is-pass': isTrainPass(data) }"
-        @click="
-          openTraintimeDetail(
-            service.getGeneralTrainInfo(data.DailyTrainInfo.TrainNo)
-          )
-        "
-      >
+      <button class="btn btn-outline-light" :class="{ 'train-is-pass': isTrainPass(data) }" @click="
+        openTraintimeDetail(
+          service.getGeneralTrainInfo(data.DailyTrainInfo.TrainNo)
+        )
+        ">
         <div class="row py-1">
           <div class="col-3 d-flex justify-content-center align-items-center">
             <div>
@@ -84,10 +74,7 @@
             </div>
           </div>
           <div class="col-3 d-flex flex-column text-small">
-            <free-seating-cars
-              :freeSeatingCarList="freeSeatingCarList"
-              :trainNo="data.DailyTrainInfo.TrainNo"
-            />
+            <free-seating-cars :freeSeatingCarList="freeSeatingCarList" :trainNo="data.DailyTrainInfo.TrainNo" />
           </div>
         </div>
       </button>
@@ -103,36 +90,42 @@
           }}
         </div>
       </div>
+
+      <div class="mt-3" v-if="showAd(index)">
+        <!-- traintime-ads -->
+        <AdBanner />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  PropType,
-  reactive,
-  ref
-} from "vue";
-import { useRouter } from "vue-router";
+import AdBanner from "@/components/AdBanner.vue";
 import FreeSeatingCars from "@/components/FreeSeatingCars.vue";
 import getTimeDiffService from "@/services/get-time-diff-service";
+import { FreeSeatingCar } from "@/types/daily-free-seating-car";
+import { Fare, fareMap, OdFare } from "@/types/od-fare";
+import { OdTimeTable } from "@/types/od-time-table";
+import {
+GeneralTimetable,
+RailGeneralTimetable
+} from "@/types/rail-general-timetable";
 import getNowDate from "@/utils/get-now-date";
 import { getServiceDays } from "@/utils/get-service-days";
-import { OdTimeTable } from "@/types/od-time-table";
-import { Fare, OdFare, fareMap } from "@/types/od-fare";
-import { FreeSeatingCar } from "@/types/daily-free-seating-car";
 import {
-  GeneralTimetable,
-  RailGeneralTimetable
-} from "@/types/rail-general-timetable";
+computed,
+defineComponent,
+onMounted,
+onUnmounted,
+PropType,
+reactive,
+ref
+} from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TimeTable",
-  components: { FreeSeatingCars },
+  components: { FreeSeatingCars, AdBanner },
   props: {
     selectedInfo: {
       type: String as PropType<string>,
@@ -208,8 +201,7 @@ export default defineComponent({
       // 若查詢日期與當下日期相同
       if (props.queryDate === getNowDate()) {
         const trainDatetime = new Date(
-          `${props.queryDate.replace(/-/g, "/")} ${
-            data.OriginStopTime.DepartureTime
+          `${props.queryDate.replace(/-/g, "/")} ${data.OriginStopTime.DepartureTime
           }`
         );
         const nowDatetime = new Date();
@@ -221,6 +213,22 @@ export default defineComponent({
 
       return false;
     };
+
+    const showAd = (index: number) => {
+      if (props.dataList.length >= 3 && index === 2) {
+        return true;
+      }
+
+      if (props.dataList.length == 2 && index === 1) {
+        return true;
+      }
+
+      if (props.dataList.length <= 1 && index === 0) {
+        return true;
+      }
+
+      return false;
+    }
 
     const openTraintimeDetail = (data?: GeneralTimetable | null) => {
       if (!data) return;
@@ -246,6 +254,7 @@ export default defineComponent({
       otherFareList,
       isShowOtherFareList,
       isTrainPass,
+      showAd,
       openTraintimeDetail,
       getServiceDays
     };

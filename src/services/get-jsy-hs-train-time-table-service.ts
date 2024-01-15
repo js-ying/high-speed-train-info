@@ -11,12 +11,15 @@ export default async function getJsyHsTrainTimeTableService(
 ): Promise<JsyHsTrainTimeTable> {
   store.commit("showLoading");
 
-  const response = await axios.post(`/api/getHsTrainTimeTable`, {
-    startStationId: startStation,
-    endStationId: endStation,
-    date: date,
-    time: time,
-  });
+  const response = await axios.post(
+    `${process.env.VUE_APP_API_END_POINT}/api/getHsTrainTimeTable`,
+    {
+      startStationId: startStation,
+      endStationId: endStation,
+      date: date,
+      time: time,
+    }
+  );
 
   store.commit("hideLoading");
 
