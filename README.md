@@ -1,6 +1,7 @@
 # 高鐵時刻查詢
 查詢高鐵時刻，簡單又快速。<br />
-Demo: [https://hs-traintime.jsy.tw](https://hs-traintime.jsy.tw)
+此為舊版，以 vue3 + bootstrap5 打造。<br />
+Demo: [https://portfolio.jsy.tw/hs-traintime](https://portfolio.jsy.tw/hs-traintime)
 
 ## 版本更新
 
