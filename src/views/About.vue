@@ -7,7 +7,7 @@
     <div class="row d-flex justify-content-center">
       <div class="col-12 col-md-8">
         <p>
-          作者：JS Ying (jsying1994@gmail.com)<br />
+          作者：JS Ying (hi@jsy.tw)<br />
           <img
             src="https://jsy.tw/logo.png"
             width="15"
@@ -27,7 +27,7 @@
 
         <div class="alert alert-light-blue mt-4" id="pwa-tip">
           手機使用者可以把這個網頁變成 APP 放在桌面上。<a
-            href="https://jsy.tw/blog/1370/"
+            href="https://blog.jsy.tw/1370/"
             target="_blank"
             >查看更多</a
           >
@@ -55,7 +55,7 @@
           4. 車次詳細時刻表：包含該車次起迄間所有進站時刻<br />
           5. 當日過期車次特效：已小於當下時間的車次會以半透明方式呈現<br />
           6. 這是我第一次挑戰深色佈景的設計，希望您會喜歡 😍<br />
-          7. 部落格介紹<a href="https://jsy.tw/blog/2011" target="_blank"
+          7. 部落格介紹<a href="https://blog.jsy.tw/2011" target="_blank"
             >【作品】高鐵時刻查詢——查詢高鐵時刻，簡單又快速。</a
           >
         </p>
